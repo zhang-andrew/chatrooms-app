@@ -1,0 +1,22 @@
+<p>user-login works!</p>
+
+<div>
+    <div *ngIf="authService.userData | async">
+        <pre>
+            {{ authService.userData | json }}
+        </pre>
+        
+        <hr>
+        <button class="button" (click)="authService.signOut()">Sign Out</button>
+    </div>
+    <div *ngIf="!(authService.userData | async) ">
+        <hr>
+        <!-- <button class="button" (click)="authService.signOut()">Sign Out</button> -->
+        <button class="button" (click)="authService.googleSignin()">Login with Google</button>
+    </div>
+    
+</div>
+
+<!-- <ng-template #login>
+    <button class="button" (click)="authService.googleSignin()">Login with Google</button>
+</ng-template> -->

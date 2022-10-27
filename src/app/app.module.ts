@@ -1,25 +1,33 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './modules/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 //grab environments
 import { environment } from '../environments/environment';
 
 //added modules for firebase
-import { AngularFireAuthModule } from '@angular/fire/compat/auth'; //AuthModule
+
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app'; // replaces: import { AngularFireModule } from '@angular/fire';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-
-import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import { AngularFireAuthModule } from '@angular/fire/auth';
 import { getAnalytics } from "firebase/analytics";
+import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { TopBarComponent } from './shared/ui/top-bar.component';
+// import { AngularFireAuthModule } from '@angular/fire/compat/auth'; //AuthModule
+// import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import { AngularFireAuthModule } from '@angular/fire/auth';
 
-import { UserLoginComponent } from './components/users/user-login/user-login.component';
-import { UserProfileComponent } from './components/users/user-profile/user-profile.component';
-import { HomeComponent } from './pages/home/home.component';
-import { ProfileComponent } from './pages/profile/profile.component';
-import { ChatroomComponent } from './components/chatroom/chatroom.component';
+
+// import { AuthService } from './shared/services/auth.service';
+
+// import { UserLoginComponent } from './_OLD/pages/components/user-login/user-login.component';
+// import { UserProfileComponent } from './_OLD/pages/components/user-profile/user-profile.component';
+// import { HomeComponent } from './_OLD/pages/home/home.component';
+// import { ProfileComponent } from './_OLD/pages/profile/profile.component';
+// import { ChatroomComponent } from './_OLD/pages/components/chatroom/chatroom.component';
+// import { AdminComponent } from './_OLD/pages/admin/admin.component';
+// import { LoginFormComponent } from './_OLD/pages/components/user-login/login-form/login-form.component';
+// import { TestComponent } from './test/test.component';
 
 
 //What is the point of htis file - It is to startup your application, and set the links to your other modules.
@@ -29,11 +37,6 @@ import { ChatroomComponent } from './components/chatroom/chatroom.component';
     //Components provided in declarations[]
     declarations: [
         AppComponent,
-        UserLoginComponent,
-        UserProfileComponent,
-        HomeComponent,
-        ProfileComponent,
-        ChatroomComponent
     ],
     //Modules provided in imports[]
     imports: [
@@ -47,14 +50,18 @@ import { ChatroomComponent } from './components/chatroom/chatroom.component';
             return app;
         }),
         provideFirestore(() => getFirestore()),
-        provideAuth(() => {
-            const auth = getAuth();
-            return auth;
-        }),
-        AngularFireAuthModule,
+        // provideAuth(() => {
+        //     const auth = getAuth();
+        //     return auth;
+        // }),
+        // AngularFireAuthModule,
+        TopBarComponent
     ],
     //Services provided in providers[], but most services inject themselves into the root.
-    providers: [],
+    providers: [
+        // AuthService,
+        { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig }
+    ],
     //?i dunno what bootstrap[] is?
     bootstrap: [AppComponent]
 }) export class AppModule { }
