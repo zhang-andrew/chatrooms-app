@@ -14,8 +14,10 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAnalytics } from "firebase/analytics";
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { TopBarComponent } from './shared/ui/top-bar.component';
+// import { AuthService } from './shared/services/auth.service';
 // import { AngularFireAuthModule } from '@angular/fire/compat/auth'; //AuthModule
-// import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import { AngularFireAuthModule } from '@angular/fire/auth';
+import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import { AngularFireAuthModule } from '@angular/fire/auth';
+// import { AuthService } from './shared/services/auth.service';
 
 
 // import { AuthService } from './shared/services/auth.service';
@@ -50,17 +52,21 @@ import { TopBarComponent } from './shared/ui/top-bar.component';
             return app;
         }),
         provideFirestore(() => getFirestore()),
-        // provideAuth(() => {
-        //     const auth = getAuth();
-        //     return auth;
-        // }),
+        provideAuth(() => {
+            //get auth instance from AuthService (auth.service.ts)
+            const auth = getAuth();
+            //provides auth instance to app(NgModule root )
+            return auth;
+        }),
         // AngularFireAuthModule,
         TopBarComponent
     ],
     //Services provided in providers[], but most services inject themselves into the root.
     providers: [
         // AuthService,
-        { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig }
+        // AuthService,
+        { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
+        // AuthService
     ],
     //?i dunno what bootstrap[] is?
     bootstrap: [AppComponent]

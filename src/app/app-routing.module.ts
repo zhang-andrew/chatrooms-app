@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 // import { AdminComponent } from './_OLD/pages/admin/admin.component';
 // import { HomeComponent } from './_OLD/pages/home/home.component';
 import { HomeIndexComponent } from './home/page/home-index.component';
+import { LoginIndexComponent } from './login/page/login-index.component';
 import { RoomsIndexComponent } from './rooms/page/rooms-index.component';
 import { AccessGuard } from './shared/services/access.guard';
 import { UsersIndexComponent } from './users/page/users-index.component';
@@ -13,12 +14,13 @@ import { UsersIndexComponent } from './users/page/users-index.component';
 
 const routes: Routes = [
     { path: '', component: HomeIndexComponent },
-    { path: 'users', component: UsersIndexComponent, data:{"requiresLogin": true}, canActivate: [AccessGuard]},
+    { path: 'users', component: UsersIndexComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
     { path: 'rooms', component: RoomsIndexComponent},
+    { path: 'login', component: LoginIndexComponent},
     // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
-    {
-        path: '**', redirectTo: '', pathMatch: 'full',
-    }
+    // {
+    //     path: '**', redirectTo: '', pathMatch: 'full',
+    // }
     // { path: 'products/:productId', component: ProductDetailsComponent },
 ];
 

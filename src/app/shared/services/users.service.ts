@@ -1,20 +1,20 @@
-import { Injectable } from '@angular/core';
+// import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class UsersService {
-    constructor(){
+// @Injectable({
+//   providedIn: 'root'
+// })
+// export class UsersService {
+//     constructor(){
 
-    }
+//     }
 
-    get(){
+//     get(){
 
-    }
-    add(){
+//     }
+//     add(){
 
-    }
-    delete(){
+//     }
+//     delete(){
         
-    }
-}
+//     }
+// }

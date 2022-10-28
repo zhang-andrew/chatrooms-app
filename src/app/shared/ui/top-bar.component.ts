@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { LogoutButtonComponent } from './logout-button.component';
 
 @Component({
     selector: 'app-top-bar',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, LogoutButtonComponent],
     template: `
         <nav>
             <p>
@@ -15,6 +16,8 @@ import { Router } from '@angular/router';
                 <li><a href="/">Home</a></li>
                 <li><a href="/users">Users</a></li>
                 <li><a href="/rooms">Rooms</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><app-logout-button></app-logout-button></li>
             </ul>
         </nav>
     `,
