@@ -7,7 +7,7 @@ import { Firestore, doc, docData, getDoc, collection, addDoc, setDoc, updateDoc}
 //interfaces
 import { LoginData } from '../interfaces/login-data.interface';
 import { UserData } from '../interfaces/user-data.interface';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
 //newlyadded modules (sort them)
 
 @Injectable({

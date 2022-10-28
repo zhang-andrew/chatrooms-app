@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 //Modules
 import { CommonModule } from '@angular/common';
 // import { ReactiveFormsModule } from '@angular/forms';
@@ -7,16 +7,15 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-login-form',
+    selector: 'app-register-form',
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule],
     template: `
-        <div class="login-form">
-            <button (click)="loginWithGoogle()">Google Login</button>
+        <div class="register-form">
+            <h2>
+                Register Here
+            </h2>
             <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-                <p>
-                login-form works!
-                </p>
                 <div>
                     <label>Email</label>
                     <input formControlName="email" type="text" required>
@@ -44,10 +43,13 @@ import { Router } from '@angular/router';
         
     `,
     styles: [`
-        .login-form{
+        .register-form{
             display: flex;
             align-items: center;
             flex-direction: column;
+
+            outline: 1px dashed red;
+            outline-offset: -1px;
         }
         form{
             display: flex;
@@ -56,7 +58,7 @@ import { Router } from '@angular/router';
         }
     `]
 })
-export class LoginFormComponent implements OnInit {
+export class RegisterFormComponent implements OnInit {
     //props
     // @Input() authService: AuthService | undefined;
     // @Output() formData: EventEmitter<{ email: string; password: string; }> = new EventEmitter();
@@ -80,21 +82,19 @@ export class LoginFormComponent implements OnInit {
     }
     onSubmit(){
         // this.formData.emit(this.form.value);
-        this.login(this.form.value)
-        console.log("Submitted");
-        
+        this.attemptRegister(this.form.value)
     }
 
-    private login(loginData: any){
-        this.authService.login(loginData)
-            .then(() => {
-                console.log("SUCCESS");
-                // this.router.navigate(['/dashboard']);
+    private attemptRegister(suppliedData: any){
+        this.authService.register(suppliedData)
+            .then((result) => {
+                // console.log(result);
+                // console.log("Register SUCCESS");
                 return;
             })
-            .catch((e) => {console.log(e.message);})
-    }
-    loginWithGoogle(){
-        this.authService.loginWithGoogle();
+            .catch((e) => {
+                console.log(e.message);
+                console.log("accoutn already exists");
+            })
     }
 }

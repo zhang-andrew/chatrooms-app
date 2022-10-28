@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 //imported components
-import { LoginFormComponent } from '../../shared/ui/login-form.component';
-import { RegisterFormComponent } from '../../shared/ui/register-form.component';
+import { LoginFormComponent } from '../../shared/components/login-form.component';
+import { RegisterFormComponent } from '../../shared/components/register-form.component';
 
 
 @Component({
