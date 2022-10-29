@@ -93,7 +93,7 @@ export class RoomsService {
         // Create a query against the collection.
         const q = query(messagesCollRef, where("roomId", "==", `${roomId}`));
 
-        return onSnapshot(messagesCollRef, ( querySnapshot ) => {
+        return onSnapshot(q, ( querySnapshot ) => {
             //only get changed documents
             const changes = querySnapshot.docChanges();
             const docSnapshots = changes.map( change => change.doc);

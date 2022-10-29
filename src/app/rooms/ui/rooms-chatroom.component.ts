@@ -24,8 +24,11 @@ import { generateRandom } from 'src/app/shared/utils/makeRandom';
 
         <input type="text" (keydown.enter)="sendChat($event)">
     `,
-    styles: [
-    ]
+    styles: [`
+        input{
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    `]
 })
 export class RoomsChatroomComponent implements OnInit {
     // items: FirebaseListObservable<any>;

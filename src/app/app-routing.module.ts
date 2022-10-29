@@ -16,9 +16,10 @@ import { UsersIndexComponent } from './users/page/users-index.component';
 const routes: Routes = [
     { path: '', component: HomeIndexComponent },
     { path: 'users', component: UsersIndexComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
-    { path: 'rooms', component: RoomsIndexComponent},
-    { path: 'rooms/:roomId', component: RoomsIdComponent},
-    { path: 'login', component: LoginIndexComponent},
+    { path: 'rooms', component: RoomsIndexComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
+    { path: 'rooms/:roomId', component: RoomsIdComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
+    // { path: 'login', component: LoginIndexComponent},
+    { path: 'login', redirectTo: ''},
     // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
     // {
     //     path: '**', redirectTo: '', pathMatch: 'full',
