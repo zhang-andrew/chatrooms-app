@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
     template: `
         <div class="login-form">
             <h2>login below</h2>
-            <button (click)="loginWithGoogle()">Google Login</button>
+            <button (click)="loginWithGoogle()">Sign in with Google</button>
             <label for="">OR</label>
             <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">    
                 <div>

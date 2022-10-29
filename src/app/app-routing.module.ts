@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 // import { HomeComponent } from './_OLD/pages/home/home.component';
 import { HomeIndexComponent } from './home/page/home-index.component';
 import { LoginIndexComponent } from './login/page/login-index.component';
+import { RoomsIdComponent } from './rooms/page/rooms-id.component';
 import { RoomsIndexComponent } from './rooms/page/rooms-index.component';
 import { AccessGuard } from './shared/services/access.guard';
 import { UsersIndexComponent } from './users/page/users-index.component';
@@ -16,6 +17,7 @@ const routes: Routes = [
     { path: '', component: HomeIndexComponent },
     { path: 'users', component: UsersIndexComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
     { path: 'rooms', component: RoomsIndexComponent},
+    { path: 'rooms/:roomId', component: RoomsIdComponent},
     { path: 'login', component: LoginIndexComponent},
     // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
     // {

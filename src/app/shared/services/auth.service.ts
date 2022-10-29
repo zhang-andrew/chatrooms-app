@@ -16,6 +16,7 @@ import { UserData } from '../interfaces/user-data.interface';
 export class AuthService {
     // private userCollection: CollectionReference<DocumentData>;
     // private authenticationStatus: boolean = false;
+    // private user
     constructor(private readonly auth: Auth, private readonly router: Router, private readonly db: Firestore){
         console.log("AUTHSERVICE INITIALISED");
     }

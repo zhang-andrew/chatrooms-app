@@ -3,25 +3,28 @@ import { CommonModule } from '@angular/common';
 import { RoomData } from 'src/app/shared/interfaces/room-data.interface';
 import { Observable } from 'rxjs';
 import { DocumentData } from 'firebase/firestore';
+import { RouterModule } from '@angular/router';
+// import { Router, RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-rooms-list',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, RouterModule],
     template: `
     <div class="rooms-list">
         <p>
             rooms-list works!
             List of rooms:
         </p>
-        <div *ngFor="let room of rooms | async">
+        <!-- <div *ngFor="let room of rooms | async"> -->
+        <div *ngFor="let room of rooms">
             <article class="room">
                 <h3>
                     <!-- <a
                     [routerLink]="['products', product.id]"
                     [title]="product.name + ' details'"
                     > -->
-                    <a href="">{{room.roomId}}</a>
+                    <a [routerLink]="[room.roomId]" >{{room.roomId}}</a>
                 </h3>
                 <p *ngIf="room.members">Members: {{ room.members }}</p>
             </article>
@@ -38,10 +41,11 @@ import { DocumentData } from 'firebase/firestore';
 })
 export class RoomsListComponent implements OnInit {
     // @Input() rooms: any[] | undefined;
-    @Input() rooms: Promise<any[]>;
+    @Input() rooms;
     constructor() {}
 
     ngOnInit(): void {
     }
+    
 
 }
