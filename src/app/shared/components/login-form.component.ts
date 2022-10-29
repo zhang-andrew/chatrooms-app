@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
     template: `
         <div class="login-form">
             <h2>login below</h2>
-            <button (click)="loginWithGoogle()">Sign in with Google</button>
+            <button class="google-login" (click)="loginWithGoogle()">Sign in with Google</button>
             <label for="">OR</label>
             <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">    
                 <div>
@@ -43,6 +43,11 @@ import { Router } from '@angular/router';
         
     `,
     styles: [`
+        .google-login{
+            background-color: lightBlue;
+            color: black;
+            border-radius: 1rem;
+        }
         .login-form{
             display: flex;
             align-items: center;
