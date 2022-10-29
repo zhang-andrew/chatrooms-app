@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RoomsService } from 'src/app/shared/services/rooms.service';
+import { MessageData } from 'src/app/shared/interfaces/message-data.interface';
+import { generateRandom } from 'src/app/shared/utils/makeRandom';
 
 @Component({
     selector: 'app-rooms-chatroom',
@@ -9,6 +12,17 @@ import { CommonModule } from '@angular/common';
         <p>
             rooms-chatroom works!
         </p>
+        <!-- <div *ngFor="let message of messages | async"> -->
+        <div *ngFor="let message of messages">
+            <pre>
+                message: {{ message.text | json }}
+                <!-- <br> -->
+                by user: {{ message.userId | json }} 
+                
+            </pre>
+        </div>
+
+        <input type="text" (keydown.enter)="sendChat($event)">
     `,
     styles: [
     ]
@@ -22,11 +36,42 @@ export class RoomsChatroomComponent implements OnInit {
     // The items property is set to the FirebaseListObservable. This helps fetch the messages from Firebase.
     // The name property is something we'll set to check if the auth is successful.
     // msgVal we're using for property binding, which will allow us to clear the text input field after a user hits Enter to submit a new chat message.
-    constructor(){
-        // fetchChat()
+    @Input() roomId: string;
+    // messages;
+    messages = [];
+    constructor(private readonly roomsService: RoomsService){
+
+        
     }
 
     ngOnInit(): void{
+        //Input properties isn't initialized until view is set up so generally you can access input value on ngOnInit()
+        console.log("room messages: "+this.roomId);
+        console.log(this.roomsService.getRoomMessages(this.roomId));
+        // this.messages = this.roomsService.getRoomMessages(this.roomId);
+        const unsubscribe = this.roomsService.subscribeToRoomMessages(this.roomId, (newMessages) => {
+            // console.log()
+            this.messages = [...this.messages, ...newMessages];
+            // return newMessages
+        })
+        
+    }
+
+    async sendChat(event){
+        console.log("sent message: "+ event.target.value);
+        //save
+        const message: MessageData = {
+            messageId: generateRandom(),
+            userId: "",
+            createdAt: "",
+            text: event.target.value,
+            roomId: this.roomId
+        }
+        // this.roomsService.createNewMessage(this.roomId, message);
+        await this.roomsService.createMessage(message);
+
+        //reset input
+        event.target.value = "";
     }
 
     

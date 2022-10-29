@@ -7,7 +7,7 @@ function makeRandom(lengthOfCode: number, possible: string) {
 }
 
 function generateRandom(){
-    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,./;'[]\=-)(*&^%$#@!~`";
+    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";//,./;'[]\=-)(*&^%$#@!~`";
     const lengthOfCode = 20;
     
     return makeRandom(lengthOfCode, possible);

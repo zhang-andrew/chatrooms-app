@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { Firestore, doc, collectionData, docData, getDoc, collection, addDoc, setDoc, updateDoc, DocumentData, CollectionReference, collectionChanges } from '@angular/fire/firestore';
-import { getDocs, query, DocumentReference, QuerySnapshot, onSnapshot } from 'firebase/firestore';
+import { Firestore, doc, collectionData, docData, getDoc, addDoc, updateDoc, DocumentData, CollectionReference, collectionChanges } from '@angular/fire/firestore';
+import { getDocs, query, DocumentReference, QuerySnapshot, setDoc, onSnapshot, collection, where} from 'firebase/firestore';
 import { Observable, tap } from 'rxjs';
 
 
@@ -26,6 +26,28 @@ export class RoomsService {
 
     }
 
+    async createMessage(message: MessageData){
+        if (message !== null) {
+            const messageCollectionRef = await collection(this.db, "messages");
+            const messageDocumentRef = await doc(messageCollectionRef);
+            // const messageDocumentRef = messageCollectionRef.docs
+            const data = {
+                messageId: messageDocumentRef.id, //auto generated id
+                roomId: message.roomId,
+                userId: message.userId,
+                createdAt: message.createdAt,
+                text: message.text
+            };
+            console.log("created new messageData");
+            
+            return setDoc(messageDocumentRef, data);;
+        }
+        return {
+            message: "could not CREATE messageData."
+        };
+    }
+
+
     //READ
     async getRoom(id): Promise<DocumentData | null>{
         //get reference to a document in collection
@@ -42,12 +64,46 @@ export class RoomsService {
             return null;
         }
     }
-    async getRoomAndSubscribe(){
-
-    }
     async subscribeToRoom(){
-
     }
+
+    async getRoomMessages(roomId: string) {
+        //get a reference to entire collection.
+        const messagesCollRef = collection(this.db, "messages");
+        // Create a query against the collection.
+        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`));
+
+        //querySnapshot (think of it as many documentSnapshots - plural)
+        const querySnapshot = await getDocs(q); //returns a querySnapshot (contains a "docs" property that contains many documentSnapshots plural) 
+        //documentSnapshots (plural) 
+        const docSnapshots = querySnapshot.docs;
+        if (docSnapshots.length > 0) {
+            //get document(s) data.
+            const messages = docSnapshots.map(doc => doc.data());
+            // console.log("Found room Messages"+ messages);
+            return messages;
+        } else {
+            console.log("Collection is empty.")
+            return null;
+        }
+    }
+    async subscribeToRoomMessages(roomId: string, callback){
+        //get reference to entire collection.
+        const messagesCollRef = collection(this.db, "messages");
+        // Create a query against the collection.
+        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`));
+
+        return onSnapshot(messagesCollRef, ( querySnapshot ) => {
+            //only get changed documents
+            const changes = querySnapshot.docChanges();
+            const docSnapshots = changes.map( change => change.doc);
+            const messages = docSnapshots.map( doc => doc.data());
+            // const rooms = changes.map( change => change.doc.data());
+            callback(messages);
+            // return rooms
+        })
+    }
+    
     async getRooms() {
         //get reference to entire collection.
         // const roomsCollRef = query(collection(this.db, "rooms"));
@@ -74,62 +130,36 @@ export class RoomsService {
         //get reference to entire collection.
         const roomsCollRef = collection(this.db, "rooms");
 
-        //subscribes to data changes in the rooms cloud data, and runs the callback function
-        // return onSnapshot(roomsCollRef, async (querySnapshot: QuerySnapshot) => {
-        //     const docSnapshots = querySnapshot.docs;
-        //     if (docSnapshots.length > 0) {
-        //         //get document(s) data.
-        //         const rooms = docSnapshots.map(doc => doc.data());
-        //         return rooms;
-        //     } else {
-        //         console.log("Collection is empty.")
-        //         return null;
-        //     }
-        // })
-
+        /**
+         * Important: The first query snapshot contains added events for all existing documents that match the query. 
+         * This is because you're getting a set of changes that bring your query snapshot current with the initial 
+         * state of the query. 
+         * 
+         * This allows you, for instance, to directly populate your UI from the changes you receive in the first 
+         * query snapshot, without needing to add special logic for handling the initial state.
+         */
         return onSnapshot(roomsCollRef, ( querySnapshot ) => {
-            //get all documents (including changed and unchanged documents)
-            const docSnapshots = querySnapshot.docs;
-            if (docSnapshots.length > 0) {
-                //get document(s) data.
-                const rooms = docSnapshots.map(doc => doc.data());
-                callback(rooms);
-                return rooms;
-            } else {
-                console.log("Collection is empty.")
-                return null;
-            }
+            // //get all documents (including changed and unchanged documents)
+            // const docSnapshots = querySnapshot.docs;
+            // if (docSnapshots.length > 0) {
+            //     //get document(s) data.
+            //     const rooms = docSnapshots.map(doc => doc.data());
+            //     callback(rooms);
+            //     return rooms;
+            // } else {
+            //     console.log("Collection is empty.")
+            //     return null;
+            // }
 
             //only get changed documents
             const changes = querySnapshot.docChanges();
-            const rooms = changes.map( change => change.doc.data());
+            const docSnapshots = changes.map( change => change.doc);
+            const rooms = docSnapshots.map( doc => doc.data());
+            // const rooms = changes.map( change => change.doc.data());
             callback(rooms);
-            return rooms
+            // return rooms
         })
 
-        // return new Promise( resolve => {
-        //     onSnapshot(roomsCollRef, ( querySnapshot ) => {
-        //         // const docSnapshots = querySnapshot.docs;
-        //         const changes = querySnapshot.docChanges();
-        //         const rooms = changes.map( change => change.doc.data());
-        //         // return rooms
-        //         resolve (rooms);
-        //         // const changes = querySnapshot.docChanges().forEach( (change) => {
-        //         //     if (change.type === "added") {
-        //         //         console.log("New city: ", change.doc.data());
-        //         //     }
-        //         //     if (change.type === "modified") {
-        //         //         console.log("Modified city: ", change.doc.data());
-        //         //     }
-        //         //     if (change.type === "removed") {
-        //         //         console.log("Removed city: ", change.doc.data());
-        //         //     }
-        //         //     const rooms = docSnapshots.map(doc => doc.data());
-        //         // });
-        //     })
-        // })
-
-        // return await cb();
 
         // const fetchNewMessages = (threadId: string, latestTimestamp: any) => {
         //     const q = query(threadRef(threadId), orderBy('timestamp', 'asc'), startAfter(latestTimestamp));
@@ -189,38 +219,43 @@ export class RoomsService {
     }
 
     //CREATE
-    private async createNewMember(roomId: RoomData["roomId"], memberId: UserData["uid"]) {
-        //get room Document Reference
-        const roomDocumentRef = doc(this.db, `rooms/${roomId}`);
-        const docSnap = await getDoc(roomDocumentRef);
-        if (docSnap.exists()) {
-            console.log("Database Document DOES exist")
-            //get roomData
-            const documentData = docSnap.data();
-            const roomData: RoomData = {
-                roomId: documentData['roomId'],
-                roomPassword: documentData['roomPassword'],
-                messages: documentData['messages'],
-                members: (documentData['members'].push(memberId)),  //push new member to array
-            }
-            //update roomData document
-            this.updateRoomData(roomData);
-            return {
-                message: `success: created new member in room.${roomId}`
-            }
-        } else {
-            return {
-                message: `error: room.${roomId} could not be found in database to save new message.`
-            }
-        }
-    }
+    // private async createNewMember(roomId: RoomData["roomId"], memberId: UserData["uid"]) {
+    //     //get room Document Reference
+    //     const roomDocumentRef = doc(this.db, `rooms/${roomId}`);
+    //     const docSnap = await getDoc(roomDocumentRef);
+    //     if (docSnap.exists()) {
+    //         console.log("Database Document DOES exist")
+    //         //get roomData
+    //         const documentData = docSnap.data();
+    //         const roomData: RoomData = {
+    //             roomId: documentData['roomId'],
+    //             roomPassword: documentData['roomPassword'],
+    //             messages: documentData['messages'],
+    //             members: (documentData['members'].push(memberId)),  //push new member to array
+    //         }
+    //         //update roomData document
+    //         this.updateRoomData(roomData);
+    //         return {
+    //             message: `success: created new member in room.${roomId}`
+    //         }
+    //     } else {
+    //         return {
+    //             message: `error: room.${roomId} could not be found in database to save new message.`
+    //         }
+    //     }
+    // }
 
-    private async createNewMessage(roomId: RoomData["roomId"], message: MessageData) {
+    async createNewMessage(roomId: RoomData["roomId"], message: MessageData) {
         //get room Document Reference
         const roomDocumentRef = doc(this.db, `rooms/${roomId}`);
+        // this.db.collection("users").doc(this.Uid).update({items: [{name: "item", price: 25, desc: "a simple item"}, {name: "item2", price: 20, desc: "a simple item2"}]}) 
+        // await updateDoc(roomDocumentRef, {messages: [message]})
+
         const docSnap = await getDoc(roomDocumentRef);
         if (docSnap.exists()) {
             console.log("Database Document DOES exist")
+            
+
             //get roomData
             const documentData = docSnap.data();
             const roomData: RoomData = {

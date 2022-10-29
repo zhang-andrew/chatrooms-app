@@ -12,12 +12,14 @@ import { RoomsChatroomComponent } from '../ui/rooms-chatroom.component';
         <p>
             rooms-id works!
         </p>
-        <app-rooms-chatroom></app-rooms-chatroom>
+        <app-rooms-chatroom [roomId]="roomId"></app-rooms-chatroom>
     `,
     styles: [
     ]
 })
 export class RoomsIdComponent implements OnInit {
+    roomId = "";
+
     constructor(private route: ActivatedRoute, private roomsService: RoomsService) { }
 
     ngOnInit(): void {
@@ -26,6 +28,8 @@ export class RoomsIdComponent implements OnInit {
         console.log(routeParams);
         const roomIdFromRoute = String(routeParams.get('roomId'));
         console.log(roomIdFromRoute);
+        this.roomId = roomIdFromRoute;
+        
 
         // // Find the product that corresponds with the id provided in route.
         // this.product = products.find(

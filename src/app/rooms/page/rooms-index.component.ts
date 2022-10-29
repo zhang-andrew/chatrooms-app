@@ -31,7 +31,7 @@ import { RoomData } from 'src/app/shared/interfaces/room-data.interface';
 export class RoomsIndexComponent implements OnInit {
     // rooms = rooms;
     // rooms: Promise<DocumentData[]> | undefined;
-    rooms;
+    rooms = [];
     constructor(private readonly roomsService: RoomsService){ 
         // this.rooms = this.roomsService.getAllRooms();
         // this.rooms = this.roomsService.getRooms();
@@ -39,8 +39,9 @@ export class RoomsIndexComponent implements OnInit {
         // this.rooms = this.roomsService.getRoomsAndSubscribe();
         
         //save to unsubscribe variable so when this component is not rendered, unmount the subscription snapshot
-        const unsubscribe = this.roomsService.subscribeToRooms((rooms) => {
-            this.rooms = rooms;
+        //first query snapshot returns all existing documents.
+        const unsubscribe = this.roomsService.subscribeToRooms((changedRooms) => {
+            this.rooms = [...this.rooms, ...changedRooms];
             console.log(this.rooms);
         });
     }
