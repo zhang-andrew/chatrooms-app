@@ -64,7 +64,7 @@ export class RoomsIndexComponent implements OnInit {
             messages: [],
             members: [],
         }
-        await this.roomsService.createRoomData(roomData);
+        await this.roomsService.createRoom(roomData);
     }
 
 }

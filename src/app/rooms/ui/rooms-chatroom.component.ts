@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RoomsService } from 'src/app/shared/services/rooms.service';
 import { MessageData } from 'src/app/shared/interfaces/message-data.interface';
 import { generateRandom } from 'src/app/shared/utils/makeRandom';
+// import { AuthService } from 'src/app/shared/services/auth.service';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
     selector: 'app-rooms-chatroom',
@@ -15,10 +17,9 @@ import { generateRandom } from 'src/app/shared/utils/makeRandom';
         <!-- <div *ngFor="let message of messages | async"> -->
         <div *ngFor="let message of messages">
             <pre>
-                message: {{ message.text | json }}
-                <!-- <br> -->
                 by user: {{ message.userId | json }} 
-                
+                message: {{ message.text | json }}
+                timestamp: {{ message.createdAt }} 
             </pre>
         </div>
 
@@ -42,7 +43,7 @@ export class RoomsChatroomComponent implements OnInit {
     @Input() roomId: string;
     // messages;
     messages = [];
-    constructor(private readonly roomsService: RoomsService){
+    constructor(private readonly roomsService: RoomsService, private readonly auth: Auth,){
 
         
     }
@@ -50,7 +51,7 @@ export class RoomsChatroomComponent implements OnInit {
     ngOnInit(): void{
         //Input properties isn't initialized until view is set up so generally you can access input value on ngOnInit()
         console.log("room messages: "+this.roomId);
-        console.log(this.roomsService.getRoomMessages(this.roomId));
+        console.log(this.roomsService.getMessagesByRoomId(this.roomId));
         // this.messages = this.roomsService.getRoomMessages(this.roomId);
         const unsubscribe = this.roomsService.subscribeToRoomMessages(this.roomId, (newMessages) => {
             // console.log()
@@ -65,8 +66,8 @@ export class RoomsChatroomComponent implements OnInit {
         //save
         const message: MessageData = {
             messageId: generateRandom(),
-            userId: "",
-            createdAt: "",
+            userId: this.auth.currentUser.uid,
+            // createdAt: "",
             text: event.target.value,
             roomId: this.roomId
         }
