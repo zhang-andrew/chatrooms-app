@@ -50,6 +50,17 @@ app-root{
     > :nth-child(3){
         display: block;
         height: 100vh;
+        @media (orientation: "portrait") {
+            height: 100svh;
+            * {
+                //to fix zooming behaviour on inputs on ios devices. - ref: That's simply what iOS does when the font on an input field is less than 16px: https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/ Any input field. 
+                font-size: 16px;
+            }
+        }
+        * {
+            font-size: 1.6rem;
+        }
+
         //push down to accomodate for topbarheight
         padding-top: var(--top-bar-height);
 
