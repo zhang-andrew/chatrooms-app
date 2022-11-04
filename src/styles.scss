@@ -7,6 +7,7 @@
 
     font-family: 'Signika Negative', sans-serif, Arial;
     font-size: 62.5%; //1rem == 10px now.
+    // display: block;
 }
 html{
     height: 100%;
@@ -22,6 +23,10 @@ body{
     outline: 5px dashed black;
     outline-offset: -5px;
 }
+:root{
+    --top-bar-height: 5rem;
+    // --page-height: calc(100vh - var(--top-bar-height));
+}
 app-root{
     display: block;
     height: 100%;
@@ -29,35 +34,29 @@ app-root{
     // height: 100vh;
     // width: 100%;
     background-color: gainsboro;
-}
-:root{
-    --top-bar-height: 5rem;
-    // --page-height: calc(100vh - var(--top-bar-height));
-}
 
-app-top-bar{
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: var(--top-bar-height);
-    width: 100%;
-
-    background-color: lightblue;
-}
-app-home-index, app-rooms-index{
-    display: block;
-    // height: calc(100vh - var(--top-bar-height));
-    // height: 100% !important;
-    height: 100vh;
-    background-color: lightcoral;
-
-    > :nth-child(1){
+    //top-bar
+    app-top-bar{
         display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: var(--top-bar-height);
+        width: 100%;
+    
+        background-color: lightblue;
+    }
+    //Router-outlet Elements
+    > :nth-child(3){
+        display: block;
+        height: 100vh;
+        //push down to accomodate for topbarheight
         padding-top: var(--top-bar-height);
-        
+
+        background-color: lightcoral;
     }
 }
+
 
 
 
