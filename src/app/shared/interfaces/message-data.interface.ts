@@ -1,7 +1,7 @@
 
 
 export interface MessageData {
-    messageId: string;
+    messageId?: string;
     roomId: string;
     userId: string;
     createdAt?: string; //? suffix makes it optional

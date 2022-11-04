@@ -2,30 +2,55 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoomsService } from 'src/app/shared/services/rooms.service';
 import { MessageData } from 'src/app/shared/interfaces/message-data.interface';
-import { generateRandom } from 'src/app/shared/utils/makeRandom';
+
 // import { AuthService } from 'src/app/shared/services/auth.service';
 import { Auth } from '@angular/fire/auth';
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 @Component({
     selector: 'app-rooms-chatroom',
     standalone: true,
     imports: [CommonModule],
     template: `
-        <p>
-            rooms-chatroom works!
-        </p>
-        <!-- <div *ngFor="let message of messages | async"> -->
-        <div *ngFor="let message of messages">
-            <pre>
-                by user: {{ message.userId | json }} 
-                message: {{ message.text | json }}
-                timestamp: {{ message.createdAt }} 
-            </pre>
-        </div>
-
-        <input type="text" (keydown.enter)="sendChat($event)">
+        <section class="container">
+            <p>
+                rooms-chatroom works!
+            </p>
+            <!-- <div *ngFor="let message of messages | async"> -->
+            <div class="message-container">
+                <div id="">
+                </div>
+                <div class="message" *ngFor="let message of messages">
+                    <!-- <pre> -->
+                        user: {{ message.userId | json }}
+                        message: {{ message.text | json }}
+                        <!-- timestamp: {{ message.createdAt }}  -->
+                    <!-- </pre> -->
+                </div>
+            </div>
+            <input id="message-bar" type="text" (keydown.enter)="sendChat($event)">
+        </section>
     `,
     styles: [`
+        section{
+            max-height: 100%;
+            max-width: 100vw;
+        }
+        .message-container{
+            max-height: 80vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            outline: 1px solid red;
+            outline-offset: -1px;
+        }
+        #message-bar{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        .message{
+
+        }
         input{
             background-color: rgba(0, 0, 0, 0.1);
         }
@@ -43,21 +68,47 @@ export class RoomsChatroomComponent implements OnInit {
     @Input() roomId: string;
     // messages;
     messages = [];
-    constructor(private readonly roomsService: RoomsService, private readonly auth: Auth,){
-
+    isFirstLoad = true;
+    constructor(private readonly roomsService: RoomsService, private readonly auth: Auth, private readonly authService: AuthService){
+        console.log(authService.loggedInUser);
+        console.log("IT WORKED");
         
     }
 
     ngOnInit(): void{
+
+        // const messageContainer = document.getElementById('message-container');
+        // console.log(messageContainer);
+        
         //Input properties isn't initialized until view is set up so generally you can access input value on ngOnInit()
-        console.log("room messages: "+this.roomId);
-        console.log(this.roomsService.getMessagesByRoomId(this.roomId));
-        // this.messages = this.roomsService.getRoomMessages(this.roomId);
+        // console.log("room messages: "+this.roomId);
+        // console.log(this.roomsService.getMessagesByRoomId(this.roomId));
         const unsubscribe = this.roomsService.subscribeToRoomMessages(this.roomId, (newMessages) => {
             // console.log()
             this.messages = [...this.messages, ...newMessages];
             // return newMessages
+
+            //I guess we have to wait for the ng* for loop to generate a new message. then:
+            //scroll to bottom of messageContainer to latest message element
+            setTimeout(()=>{
+                // console.log(messageContainer);
+                let messageElems = document.querySelector('.message-container').children; //.scrollIntoView({behavior: "smooth"});                
+                if (messageElems.length >= 2){
+                    if (this.isFirstLoad){
+                        messageElems[messageElems.length - 2].scrollIntoView({behavior: 'auto'});
+                        this.isFirstLoad = false;
+                    } else {
+                        messageElems[messageElems.length - 2].scrollIntoView({behavior: 'smooth'});
+                    }
+                } 
+                
+            }, 5)
+        
+            
         })
+    }
+
+    ngAfterViewInit() {
         
     }
 
@@ -65,7 +116,7 @@ export class RoomsChatroomComponent implements OnInit {
         console.log("sent message: "+ event.target.value);
         //save
         const message: MessageData = {
-            messageId: generateRandom(),
+            // messageId: generateRandom(),
             userId: this.auth.currentUser.uid,
             // createdAt: "",
             text: event.target.value,

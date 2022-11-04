@@ -17,7 +17,7 @@ const routes: Routes = [
     { path: '', component: HomeIndexComponent },
     { path: 'users', component: UsersIndexComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
     { path: 'rooms', component: RoomsIndexComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
-    { path: 'rooms/:roomId', component: RoomsIdComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
+    { path: 'rooms/:roomId', component: RoomsIdComponent, pathMatch: 'full', data:{"requiresLogin": true, "serverConfirmRoom": true}, canActivate: [AccessGuard]},
     // { path: 'login', component: LoginIndexComponent},
     { path: 'login', redirectTo: ''},
     // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },

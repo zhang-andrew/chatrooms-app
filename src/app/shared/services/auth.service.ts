@@ -7,6 +7,7 @@ import { Firestore, doc, docData, getDoc, collection, addDoc, setDoc, updateDoc}
 //interfaces
 import { LoginData } from '../interfaces/login-data.interface';
 import { UserData } from '../interfaces/user-data.interface';
+
 // import { Observable } from 'rxjs';
 //newlyadded modules (sort them)
 
@@ -16,10 +17,16 @@ import { UserData } from '../interfaces/user-data.interface';
 export class AuthService {
     // private userCollection: CollectionReference<DocumentData>;
     // private authenticationStatus: boolean = false;
-    // private user
+    loggedInUser = {
+        uid: ""
+    };
     constructor(private readonly auth: Auth, private readonly router: Router, private readonly db: Firestore){
         console.log("AUTHSERVICE INITIALISED");
+        console.log(this.auth.currentUser);
+        
+        // this.loggedInUser['uid'] = this.auth.currentUser.uid;
     }
+
 
     //methods
     async login({email, password}: LoginData): Promise<void> {
