@@ -18,7 +18,7 @@ export class RoomsService {
     // private roomsCollection: CollectionReference<DocumentData>;
     // private rooms: RoomData[] = [];
 
-    constructor(private readonly db: Firestore, private readonly roomModel: RoomModel, private readonly messageModel: MessageModel) {
+    constructor(private readonly roomModel: RoomModel, private readonly messageModel: MessageModel) {
         console.log("ROOMSERVICE");
         // this.roomModel = new RoomModel(this.db);
     }

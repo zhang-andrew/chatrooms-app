@@ -106,6 +106,7 @@ export class LoginFormComponent implements OnInit {
             .catch((e) => {console.log(e.message);})
     }
     loginWithGoogle(){
-        this.authService.loginWithGoogle();
+        // this.authService.loginWithGoogle();
+        this.authService.loginWithProvider("google");
     }
 }

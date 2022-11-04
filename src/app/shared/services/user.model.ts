@@ -1,7 +1,11 @@
+import { Injectable } from '@angular/core';
 import { Firestore } from "@angular/fire/firestore";
-import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { UserData } from "../interfaces/user-data.interface";
 
+@Injectable({
+    providedIn: 'root'
+})
 export class UserModel{
     constructor(private readonly db: Firestore){}
     ////////////
@@ -12,6 +16,8 @@ export class UserModel{
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,    
+            // photoURL: user.photoURL,
+            // emailVerified: false,
         });
         return newUser;
     }
@@ -28,6 +34,19 @@ export class UserModel{
             return null
         }
     }
+    async getUserByEmail(email: UserData['email']){
+        const collRef = collection(this.db, "users");
+        const q = query(collRef, where("email", "==", `${email}`));
+        const querySnapshot = await getDocs(q); //querySnapshot (think of it as many docSnapshots - plural) //returns a querySnapshot (contains a "docs" property that contains many documentSnapshots plural) 
+        const docSnapshots = querySnapshot.docs;
+        if (docSnapshots.length > 0) {
+            const [user] = docSnapshots.map(doc => doc.data());
+            return user;
+        } else {
+            console.log("Collection is empty.")
+            return null;
+        }
+    }
     ////////////
     // UPDATE //
     async updateUser(user: UserData) {
@@ -36,6 +55,8 @@ export class UserModel{
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,    
+            // photoURL: user.photoURL,
+            // emailVerified: false,
         });
         return updatedUser;
     }

@@ -10,11 +10,13 @@ import { RegisterFormComponent } from '../../shared/components/register-form.com
     standalone: true,
     imports: [CommonModule, LoginFormComponent, RegisterFormComponent],
     template: `
-        <p>
+        <!-- <p>
         home-index works!
-        </p>
-        <app-login-form></app-login-form>
-        <app-register-form></app-register-form>
+        </p> -->
+        <!-- <div class="page"> -->
+            <app-login-form></app-login-form>
+            <app-register-form></app-register-form>
+        <!-- </div> -->
     `,
     styles: [
     ]

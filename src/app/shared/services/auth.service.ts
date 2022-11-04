@@ -8,6 +8,11 @@ import { Firestore, doc, docData, getDoc, collection, addDoc, setDoc, updateDoc}
 import { LoginData } from '../interfaces/login-data.interface';
 import { UserData } from '../interfaces/user-data.interface';
 
+//
+import { UserModel } from './user.model';
+
+
+
 // import { Observable } from 'rxjs';
 //newlyadded modules (sort them)
 
@@ -15,18 +20,17 @@ import { UserData } from '../interfaces/user-data.interface';
   providedIn: 'root'
 })
 export class AuthService {
-    // private userCollection: CollectionReference<DocumentData>;
-    // private authenticationStatus: boolean = false;
-    loggedInUser = {
-        uid: ""
-    };
-    constructor(private readonly auth: Auth, private readonly router: Router, private readonly db: Firestore){
+    isLoggedIn: Boolean = false;
+    constructor(private readonly auth: Auth, private readonly router: Router, private readonly userModel: UserModel){
         console.log("AUTHSERVICE INITIALISED");
-        console.log(this.auth.currentUser);
-        
-        // this.loggedInUser['uid'] = this.auth.currentUser.uid;
+        this.auth.onAuthStateChanged(user => {
+            if (user){
+                this.isLoggedIn = true;
+            } else {
+                this.isLoggedIn = false;
+            }
+        })
     }
-
 
     //methods
     async login({email, password}: LoginData): Promise<void> {
@@ -35,20 +39,34 @@ export class AuthService {
         console.log("signed in with email and password");
 
         //sync with firestore. Check if data exists on database, if not create new document, if so update document.
-        this.syncWithDatabase(this.auth.currentUser);
+        // this.syncWithDatabase(this.auth.currentUser);
     }
-
-    async loginWithGoogle(): Promise<void> {
-        //signin with fireauth
-        const provider = new GoogleAuthProvider();
-        const credential = await signInWithPopup(this.auth, provider); //NOTE* credential.user.id == this.auth.currentUser.uid
+    async loginWithProvider(provider){
+        let authProvider = null;
+        switch (provider) {
+            case "google":
+                authProvider = new GoogleAuthProvider();
+                break;
+            default:
+                break;
+        }
+        const credential = await signInWithPopup(this.auth, authProvider); //NOTE* credential.user.id == this.auth.currentUser.uid
         this.router.navigate(['/rooms']);
         console.log("signed in with google");
-        
-        //sync with firestore. Check if data exists on database, if not create new document, if so update document.
-        this.syncWithDatabase(credential.user);
-    }
 
+        //discover if email/user already exists
+        // let userExists = await this.userModel.getUser(credential.user.email);
+        let userExists = await this.userModel.getUser(credential.user.uid);
+        if (userExists) {
+            //pass
+            console.log("logged in with google, user id already exists in database too.");
+        } else {
+            //Is a new user
+            const newUser = await this.userModel.createUser(credential.user); // const result = await this.createUserData(user);
+            // console.log(newUser);
+            console.log("logged in with google, new user.");
+        }
+    }
     async register({email, password}: LoginData): Promise<void> {
         let credential;
         try {
@@ -57,7 +75,8 @@ export class AuthService {
             console.log("registered with email and password");
             
             //create userData
-            this.createUserData(credential.user);
+            // this.createUserData(credential.user);
+            this.userModel.createUser(credential.user);
         } catch (e) {
             console.log("error1");
             console.log(e.message);
@@ -69,11 +88,7 @@ export class AuthService {
         // this.authenticationStatus = false;
         return signOut(this.auth);
     }
-    
-    // getLoginStatus2(){
-    //     // let test: Observable
-    //     return new Observable<User>(this.auth.currentUser;)
-    // }
+
     async getLoginStatus(): Promise<boolean> {
         //Promises are just an object returned from a function — whether it be a method or not doesn't matter
         return new Promise((resolve, reject) => {
@@ -91,82 +106,25 @@ export class AuthService {
             })
         })
     }
-
-    private async syncWithDatabase(user: User){
-        //sync with firestore. Check if data exists on database
-        const userData = await this.getUserDataByUid(user.uid);
-        console.log(`Syncing user.${user.uid} data with database.`);
-        if (userData){
-            //is existing user
-            const result = await this.updateUserData(user);
-            console.log(result);
-            
-        } else {
-            //is a new user
-            const result = await this.createUserData(user);
-            console.log(result);
-        }  
-    }
-
-    
-    ///////////////////////
-    // MODELS
-    ///////////////////////
-    //READ
-    private async getUserDataByUid(uid: String){
-        const userDocumentReference = doc(this.db, `users/${uid}`);
-        const docSnap = await getDoc(userDocumentReference);
-        if (docSnap.exists()) {
-            console.log("Database Document DOES exist")
-            return docSnap.data();
-        } else {
-            console.log("Database Document does NOT exist")
-            return undefined;
-        }
-    }
-
-    //CREATE
-    private createUserData(user: UserData){        
-        if (user !== null) {
-            const userDocumentRef = doc(this.db, `users/${user.uid}`);
-            const data = {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                emailVerified: false,
-            };
-
-            // return updateDoc(userDocumentRef, data)
-            // const usersCollection = collection(this.db, 'users');
-            console.log("created new userData");
-            return setDoc(userDocumentRef, data);;
-        }
-        return {
-            message: "could not CREATE userData."
-        };
-    }
-
-    //UPDATE
-    private updateUserData(user: UserData) {
-        //sets user data to firestore on login
-        if (user !== null) {
-            const userDocumentRef = doc(this.db, `users/${user.uid}`);
-            const data = {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                emailVerified: false,
-            };
-            //update any changed fields
-            updateDoc(userDocumentRef, data)
-            return {
-                message: "updated existing userData"
-            }
-        }
-        return {
-            message: "could not UPDATE userData."
-        };
-    }
 }
+
+
+
+
+
+    // private async syncWithDatabase(user: User){
+    //     //sync with firestore. Check if data exists on database
+    //     const userData = await this.getUserDataByUid(user.uid);
+    //     console.log(`Syncing user.${user.uid} data with database.`);
+    //     if (userData){
+    //         //is existing user
+    //         const result = await this.updateUserData(user);
+    //         console.log(result);
+            
+    //     } else {
+    //         //is a new user
+    //         const result = await this.createUserData(user);
+    //         console.log(result);
+    //     }  
+    // }
+

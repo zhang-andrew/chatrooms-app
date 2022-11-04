@@ -70,8 +70,8 @@ export class RoomsChatroomComponent implements OnInit {
     messages = [];
     isFirstLoad = true;
     constructor(private readonly roomsService: RoomsService, private readonly auth: Auth, private readonly authService: AuthService){
-        console.log(authService.loggedInUser);
-        console.log("IT WORKED");
+        // console.log(authService.loggedInUser);
+        // console.log("IT WORKED");
         
     }
 
