@@ -32,20 +32,31 @@ app-root{
 }
 :root{
     --top-bar-height: 5rem;
-    --page-height: calc(100svh - var(--top-bar-height));
+    // --page-height: calc(100vh - var(--top-bar-height));
 }
 
 app-top-bar{
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
     height: var(--top-bar-height);
+    width: 100%;
+
     background-color: lightblue;
 }
-app-home-index{
+app-home-index, app-rooms-index{
     display: block;
     // height: calc(100vh - var(--top-bar-height));
     // height: 100% !important;
-    height: var(--page-height);
+    height: 100vh;
     background-color: lightcoral;
+
+    > :nth-child(1){
+        display: block;
+        padding-top: var(--top-bar-height);
+        
+    }
 }
 
 
