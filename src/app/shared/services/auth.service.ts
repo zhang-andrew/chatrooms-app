@@ -71,7 +71,7 @@ export class AuthService {
         let credential;
         try {
             credential = await createUserWithEmailAndPassword(this.auth, email, password)
-            this.router.navigate(['/login']);
+            this.router.navigate(['/rooms']);
             console.log("registered with email and password");
             
             //create userData

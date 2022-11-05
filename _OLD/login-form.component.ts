@@ -6,12 +6,20 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Router } from '@angular/router';
 
+import { IonicModule } from '@ionic/angular';
+
 @Component({
     selector: 'app-login-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, IonicModule],
     template: `
         <div class="login-form">
+            <!-- <ion-content> -->
+            <ion-button>Button</ion-button>
+            <!-- </ion-content> -->
+            
+            <ion-input type="text">Test</ion-input>
+
             <h2>login below</h2>
             <button class="google-login" (click)="loginWithGoogle()">Sign in with Google</button>
             <label for="">OR</label>
