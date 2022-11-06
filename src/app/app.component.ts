@@ -32,7 +32,7 @@ import { AuthService } from './shared/services/auth.service';
                         </ion-button>
                     </ion-item>
                     <ion-item>
-                        <ion-button expand="block" fill="clear" href="/profile">
+                        <ion-button expand="block" fill="clear" href="/users">
                             <span>
                                 <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
                                 <div slot="start">Profile</div>
@@ -112,10 +112,6 @@ import { AuthService } from './shared/services/auth.service';
             /* --color: black; */
             width: auto;
             float: right;
-
-            /* span{
-                font-size: 2rem;
-            } */
         }
 
         ion-item{
@@ -158,7 +154,6 @@ export class AppComponent {
     constructor(private authService: AuthService, private router: Router){    
     }
     ngOnInit(): void {
-        // Find the product that corresponds with the id provided in route.
         this.sideMenu = document.querySelector(".side-menu");
     }
     

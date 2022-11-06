@@ -13,7 +13,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app'; // replac
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAnalytics } from "firebase/analytics";
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
-import { TopBarComponent } from './shared/components/top-bar.component';
+// import { TopBarComponent } from './shared/components/top-bar.component';
 // import { AuthService } from './shared/services/auth.service';
 // import { AngularFireAuthModule } from '@angular/fire/compat/auth'; //AuthModule
 import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import { AngularFireAuthModule } from '@angular/fire/auth';
@@ -21,7 +21,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import {
 
 import { IonicModule, IonIcon } from '@ionic/angular';
 
-import { HeaderComponent } from './shared/components/header.component';
+import { HeaderComponent } from '../../_OLD/header.component';
 // import { AuthService } from './shared/services/auth.service';
 
 // import { UserLoginComponent } from './_OLD/pages/components/user-login/user-login.component';
