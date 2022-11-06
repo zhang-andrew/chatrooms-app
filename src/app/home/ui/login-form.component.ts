@@ -12,12 +12,22 @@ import { AuthService } from 'src/app/shared/services/auth.service';
     standalone: true,
     imports: [CommonModule, ReactiveFormsModule, IonicModule],
     template: `
-        <div>
-            <ion-button class="az-text-transform-none" (click)="loginWithGoogle()" >
-                <ion-icon slot="start" name="logo-google"></ion-icon>
-                Sign in with Google
-            </ion-button>
-
+        <div class="wrapper">
+            <ion-list >
+                <ion-item>
+                    <ion-button class="provider-btn az-text-transform-none" color="dark" (click)="loginAsGuest()" >
+                        <!-- <ion-icon slot="start" name="logo-google"></ion-icon> -->
+                        Log in as Guest
+                    </ion-button>
+                </ion-item>
+                <ion-item>
+                    <ion-button class="provider-btn az-text-transform-none" (click)="loginWithGoogle()" >
+                        <ion-icon slot="start" name="logo-google"></ion-icon>
+                        Log in with Google
+                    </ion-button>        
+                </ion-item>
+            </ion-list>
+            
             <div class="ion-text-center ion-padding">
                 OR
             </div>
@@ -43,32 +53,60 @@ import { AuthService } from 'src/app/shared/services/auth.service';
                                 <ion-text color="danger">Password cannot be empty.</ion-text>
                             </div>
                         </ion-list>
-                        <ion-button role="button" type="submit">Login</ion-button>        
+                        <ion-button role="button" type="submit" color="tertiary">Log In</ion-button>        
                     </form>
                 </ion-card-content>
             </ion-card>
-
+        </div>
+        <div class="spinner">
+            <ion-grid>
+                <ion-row class="ion-justify-content-center">
+                    <ion-spinner name="crescent"></ion-spinner>
+                </ion-row>
+            </ion-grid>
         </div>
     `,
     styles: [`
-        :host{
+        :host {
+            position: relative;
             > div{
                 padding: 1rem;
             }
-            
+        }
+        ion-card {
+            box-shadow: none !important;
+            border: 1px solid rgba(0,0,0,0.1);
         }
 
-        ion-button {
+        ion-button { 
+            display: block;
             width: 100%;
+        }
+        ion-button.provider-btn {
             ion-icon{
                 padding-right: 1rem;
             }
         }
-        /* form{
-            display: flex;
-            align-items: center;
-            flex-direction: column;
+        /* .provider-btn::part(native) {
         } */
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+
+            &.active{
+                display: block;
+            }
+        }
+        
     `]
 })
 export class LoginFormComponent implements OnInit {
@@ -101,40 +139,49 @@ export class LoginFormComponent implements OnInit {
         return this.loginForm.get('password');   
     }
 
-    // get email(){
-    //     return this.form.get('email');
-    // }
-    // get password(){
-    //     return this.form.get('password');
-    // }
-    // onSubmit(){
-    //     // this.formData.emit(this.form.value);
-    //     this.login(this.form.value)
-    //     console.log("Submitted");
-        
-    // }
+    async loginOnSubmit(){
+        //turn on spinner, disable form
+        document.querySelector(".wrapper").classList.add("disabled");
+        document.querySelector(".spinner").classList.add("active");
 
-
-
-    // private login(loginData: any){
-    //     this.authService.login(loginData)
-    //         .then(() => {
-    //             console.log("SUCCESS");
-    //             // this.router.navigate(['/dashboard']);
-    //             return;
-    //         })
-    //         .catch((e) => {console.log(e.message);})
-    // }
-
-    loginOnSubmit(){
         const formValues = this.loginForm.value; //returns an object containing form values
         this.authService.login(formValues)
-            .then( result => console.log(result))
-            .catch(e => console.log(e.message))
+            .then(result => console.log(result))
+            .catch(error => {
+                //if error turn off spinner, reenable form
+                document.querySelector(".wrapper").classList.remove("disabled");
+                document.querySelector(".spinner").classList.remove("active");
+                console.log(error)
+            });
+    }
+
+    async loginAsGuest(){
+        //turn on spinner, disable form
+        document.querySelector(".wrapper").classList.add("disabled");
+        document.querySelector(".spinner").classList.add("active");
+
+        this.authService.loginAsGuest()
+            .then(result => {
+                console.log(result);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     loginWithGoogle(){
+        //turn on spinner, disable form
+        document.querySelector(".wrapper").classList.add("disabled");
+        document.querySelector(".spinner").classList.add("active");
+
         // this.authService.loginWithGoogle();
-        this.authService.loginWithProvider("google");
+        this.authService.loginWithProvider("google")
+            .then(result => console.log(result))
+            .catch(error => {
+                //if error turn off spinner, reenable form
+                document.querySelector(".wrapper").classList.remove("disabled");
+                document.querySelector(".spinner").classList.remove("active");
+                console.log(error)
+            });
     }
 }

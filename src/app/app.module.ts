@@ -21,7 +21,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import {
 
 import { IonicModule, IonIcon } from '@ionic/angular';
 
-// import { HeaderComponent } from './shared/components/header.component';
+import { HeaderComponent } from './shared/components/header.component';
 // import { AuthService } from './shared/services/auth.service';
 
 // import { UserLoginComponent } from './_OLD/pages/components/user-login/user-login.component';
@@ -62,8 +62,8 @@ import { IonicModule, IonIcon } from '@ionic/angular';
             return auth;
         }),
         // AngularFireAuthModule,
-        TopBarComponent
-        // HeaderComponent,
+        // TopBarComponent,
+        HeaderComponent,
     ],
     //Services provided in providers[], but most services inject themselves into the root.
     providers: [

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 //firebase modules (@angular/fire/*)
+import { signInAnonymously } from 'firebase/auth';
 import { User, Auth, authState, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from '@angular/fire/auth';
 import { signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
 import { Firestore, doc, docData, getDoc, collection, addDoc, setDoc, updateDoc} from '@angular/fire/firestore';
@@ -10,6 +11,7 @@ import { UserData } from '../interfaces/user-data.interface';
 
 //
 import { UserModel } from './user.model';
+
 
 
 
@@ -33,13 +35,38 @@ export class AuthService {
     }
 
     //methods
-    async login({email, password}: LoginData): Promise<void> {
-        const credential = await signInWithEmailAndPassword(this.auth, email, password);    
-        this.router.navigate(['/rooms']);
-        console.log("signed in with email and password");
-
-        //sync with firestore. Check if data exists on database, if not create new document, if so update document.
-        // this.syncWithDatabase(this.auth.currentUser);
+    async login({email, password}: LoginData) {
+        // const credential = await signInWithEmailAndPassword(this.auth, email, password);    
+        // this.router.navigate(['/rooms']);
+        // console.log("signed in with email and password");
+        return new Promise( async(resolve, reject) => {
+            try {
+                const credential = await signInWithEmailAndPassword(this.auth, email, password);    
+                //Signed in
+                this.router.navigate(['/rooms']);
+                resolve(credential);
+            } catch (error) {
+                reject({
+                    result: "failed",
+                    error: error,
+                })
+            }
+        })
+    }
+    async loginAsGuest(){
+        return new Promise( async(resolve, reject) => {
+            try {
+                const guestCredential = await signInAnonymously(this.auth);
+                //Signed in
+                this.router.navigate(['/rooms']);
+                resolve(guestCredential);
+            } catch (error) {
+                reject({
+                    result: "failed",
+                    error: error,
+                })
+            }
+        })
     }
     async loginWithProvider(provider){
         let authProvider = null;
@@ -50,22 +77,34 @@ export class AuthService {
             default:
                 break;
         }
-        const credential = await signInWithPopup(this.auth, authProvider); //NOTE* credential.user.id == this.auth.currentUser.uid
-        this.router.navigate(['/rooms']);
-        console.log("signed in with google");
+        return new Promise( async(resolve, reject) => {
+            try {
+                const credential = await signInWithPopup(this.auth, authProvider); //NOTE* credential.user.id == this.auth.currentUser.uid
+                this.router.navigate(['/rooms']);
+                console.log("signed in with google");
 
-        //discover if email/user already exists
-        // let userExists = await this.userModel.getUser(credential.user.email);
-        let userExists = await this.userModel.getUser(credential.user.uid);
-        if (userExists) {
-            //pass
-            console.log("logged in with google, user id already exists in database too.");
-        } else {
-            //Is a new user
-            const newUser = await this.userModel.createUser(credential.user); // const result = await this.createUserData(user);
-            // console.log(newUser);
-            console.log("logged in with google, new user.");
-        }
+                //discover if email/user already exists
+                // let userExists = await this.userModel.getUser(credential.user.email);
+                let userExists = await this.userModel.getUser(credential.user.uid);
+                if (userExists) {
+                    //pass
+                    console.log("logged in with google, user id already exists in database too.");
+                } else {
+                    //Is a new user
+                    const newUser = await this.userModel.createUser(credential.user); // const result = await this.createUserData(user);
+                    // console.log(newUser);
+                    console.log("logged in with google, new user.");
+                }
+                
+                resolve(credential);
+            } catch (error) {
+                reject({
+                    result: "failed",
+                    error: error,
+                })
+            }
+        })
+        
     }
     async register({email, password}: LoginData): Promise<void> {
         let credential;
@@ -84,8 +123,11 @@ export class AuthService {
         // return createUserWithEmailAndPassword(this.auth, email, password)
     }
     logout(){
-        console.log("logged out");
+        console.log("logging out");
         // this.authenticationStatus = false;
+        if (this.auth.currentUser.isAnonymous){
+            return this.auth.currentUser.delete(); //delete() also signsOut();
+        }
         return signOut(this.auth);
     }
 

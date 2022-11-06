@@ -34,11 +34,7 @@ import { IonicModule } from '@ionic/angular';
             width: 100%;
             display: grid;
             
-            /* place-content: center; */
-            justify-content: center;
-            align-items: start;
-            
-            margin-top: 20%;
+            place-content: center;
         }
     `]
 })
