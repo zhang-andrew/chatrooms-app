@@ -7,49 +7,100 @@ import { MessageData } from 'src/app/shared/interfaces/message-data.interface';
 import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
+import { IonicModule } from '@ionic/angular';
+
 @Component({
     selector: 'app-rooms-chatroom',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, IonicModule],
     template: `
-        <section class="container">
-            <p>
-                rooms-chatroom works!
-            </p>
-            <!-- <div *ngFor="let message of messages | async"> -->
-            <div class="message-container">
-                <div id="">
-                </div>
+        <ion-card>
+            <!-- <ion-grid>
+                <ion-row> -->
+                    <!-- <ion-col> -->
+                        <ion-list class="message-container">
+                            <ion-item class="message ion-no-padding ion-no-margin" *ngFor="let message of messages">
+                                <ion-text class="ion-text-wrap">
+                                    <span>{{ message.userId | json }} :</span>
+                                    <ion-text class="message-text">
+                                        {{ message.text | json }}
+                                    </ion-text>
+                                </ion-text>
+                            </ion-item>
+                        </ion-list>
+                        <input id="message-bar" type="text" (keydown.enter)="sendChat($event)">
+                    <!-- </ion-col> -->
+                <!-- </ion-row>
+            </ion-grid> -->
+
+            <!-- <div class="scroll-container"> -->
+                
+            <!-- </div> -->
+            
+            
+            <!-- <div class="message-container">
                 <div class="message" *ngFor="let message of messages">
-                    <!-- <pre> -->
+                    <pre>
                         user: {{ message.userId | json }}
                         message: {{ message.text | json }}
-                        <!-- timestamp: {{ message.createdAt }}  -->
-                    <!-- </pre> -->
+                        timestamp: {{ message.createdAt }} 
+                    </pre>
                 </div>
-            </div>
-            <input id="message-bar" type="text" (keydown.enter)="sendChat($event)">
-        </section>
+            </div> -->
+            
+        </ion-card>
     `,
     styles: [`
-        section{
-            max-height: 100%;
-            max-width: 100vw;
+        :host{
+            > :nth-child(1) {
+                padding: 0.7rem;
+                /* max-height: 100%; */
+                height: 50vh;
+                overflow-y: hidden;
+            }
         }
-        .message-container{
-            max-height: 80vh;
+        ion-list.message-container{
+            /* max-height: 100%; */
+            /* min-height: 100vh; */
+            /* min-height: 100%; */
+            height: 50%;
             overflow-y: scroll;
             overflow-x: hidden;
-            outline: 1px solid red;
-            outline-offset: -1px;
-        }
-        #message-bar{
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
-        .message{
 
+            padding: 0;
+            padding-bottom: 0.2rem;
+            
+            /* display: flex;
+            flex-direction: column;
+            justify-content: end; */
+        }
+        ion-item.message{
+            --padding-top: 0px;
+            --padding-start: 0px;
+            --padding-end: 0px;
+            --padding-bottom: 0px;
+            --inner-padding-end: 0px;
+            --inner-padding-start: 0px;
+            --inner-padding-top: 0px;
+            --inner-padding-bottom: 0px;
+            
+            /* --ripple-color: transparent; */
+            --border-color: transparent;
+
+            --min-height: 0px;
+
+            & .message-text{
+                padding-left: 0.5ch;
+                /* padding-right: 0.3rem; */
+                box-decoration-break: clone;
+            }
+        }
+
+
+        #message-bar{
+            /* position: absolute;
+            bottom: 0; */
+            width: 100%;
         }
         input{
             background-color: rgba(0, 0, 0, 0.1);

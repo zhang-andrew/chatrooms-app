@@ -24,8 +24,13 @@ import { RoomData } from 'src/app/shared/interfaces/room-data.interface';
         
 
     `,
-    styles: [
-    ]
+    styles: [`
+        :host{
+            & > :nth-child(1){
+                padding-top: 20%;
+            }
+        }
+    `]
 })
 export class RoomsIndexComponent implements OnInit {
     // rooms = rooms;

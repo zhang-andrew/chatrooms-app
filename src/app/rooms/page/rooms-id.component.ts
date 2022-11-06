@@ -4,18 +4,34 @@ import { ActivatedRoute } from '@angular/router';
 import { RoomsService } from 'src/app/shared/services/rooms.service';
 import { RoomsChatroomComponent } from '../ui/rooms-chatroom.component';
 
+import { IonicModule } from '@ionic/angular';
+
 @Component({
     selector: 'app-rooms-id',
     standalone: true,
-    imports: [CommonModule, RoomsChatroomComponent],
+    imports: [CommonModule, IonicModule, RoomsChatroomComponent],
     template: `
-        <p>
+        <!-- <p>
             rooms-id works!
-        </p>
-        <app-rooms-chatroom [roomId]="roomId"></app-rooms-chatroom>
+        </p> -->
+        <div>
+            <app-rooms-chatroom [roomId]="roomId"></app-rooms-chatroom>
+        </div>
+        
     `,
-    styles: [
-    ]
+    styles: [`
+        :host{
+            & > :nth-child(1){
+                display: grid;
+                place-content: center;
+                position: absolute;
+                inset: 0;
+                height: 100%;
+                width: 100%;
+            }
+        }
+
+    `]
 })
 export class RoomsIdComponent implements OnInit {
     roomId = "";

@@ -37,6 +37,11 @@ import { Router } from '@angular/router';
     </div>
   `,
     styles: [`
+        :host{
+            & > :nth-child(1){
+                /* padding-top: 20%; */
+            }
+        }
         .room{
             outline: 1px dashed black;
             outline-offset: -1px;
