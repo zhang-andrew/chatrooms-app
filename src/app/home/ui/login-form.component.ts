@@ -57,14 +57,16 @@ import { AuthService } from 'src/app/shared/services/auth.service';
                     </form>
                 </ion-card-content>
             </ion-card>
+
+            <div class="spinner">
+                <ion-grid>
+                    <ion-row class="ion-justify-content-center">
+                        <ion-spinner name="crescent"></ion-spinner>
+                    </ion-row>
+                </ion-grid>
+            </div>
         </div>
-        <div class="spinner">
-            <ion-grid>
-                <ion-row class="ion-justify-content-center">
-                    <ion-spinner name="crescent"></ion-spinner>
-                </ion-row>
-            </ion-grid>
-        </div>
+
     `,
     styles: [`
         :host {
@@ -96,7 +98,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
         }
 
         .spinner {
-            position: absolute;
+            position: absolute !important;
             top: 50%;
             left: 50%;
             transform: translateX(-50%);

@@ -21,9 +21,9 @@ const routes: Routes = [
     // { path: 'login', component: LoginIndexComponent},
     // { path: 'login', redirectTo: ''},
     // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
-    // {
-    //     path: '**', redirectTo: '', pathMatch: 'full',
-    // }
+    {
+        path: '**', redirectTo: '', pathMatch: 'full',
+    }
     // { path: 'products/:productId', component: ProductDetailsComponent },
 ];
 

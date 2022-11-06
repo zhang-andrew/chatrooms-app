@@ -10,7 +10,7 @@ import { AuthService } from './shared/services/auth.service';
     // templateUrl: './app.component.html',
     // styleUrls: ['./app.component.scss'],
     template: `
-        <ion-menu contentId="main-content" type="overlay" side="end">
+        <ion-menu class="side-menu" contentId="main-content" type="overlay" side="end">
             <ion-header class="ion-no-border">
                 <ion-menu-toggle>
                     <ion-button class="x-button ion-padding" color="light">
@@ -152,15 +152,24 @@ import { AuthService } from './shared/services/auth.service';
 })
 export class AppComponent {
     title = 'chatrooms';
+    sideMenu;
+
 
     constructor(private authService: AuthService, private router: Router){    
     }
-
+    ngOnInit(): void {
+        // Find the product that corresponds with the id provided in route.
+        this.sideMenu = document.querySelector(".side-menu");
+    }
     
     attemptLogout(){
         this.authService.logout()
             .then(() => {
                 this.router.navigate(['/']);
+                //hide menu
+                this.sideMenu.close();
+                document.querySelector(".wrapper").classList.remove("disabled");
+                document.querySelector(".spinner").classList.remove("active");
             })
             .catch((e) => { 
                 console.log(e.message);
