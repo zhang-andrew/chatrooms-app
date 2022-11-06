@@ -92,8 +92,9 @@ import { AuthService } from './shared/services/auth.service';
     styles: [`
         :host{}
         ion-header{
-            outline: 1px dashed rgba(5,5,5,0.2);
-            outline-offset: -1px;
+            /* outline: 1px dashed rgba(5,5,5,0.2);
+            outline-offset: -1px; */
+            background-color: gainsboro;
         }
         ion-toolbar{
             --background: transparent;

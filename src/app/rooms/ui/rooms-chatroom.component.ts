@@ -14,65 +14,54 @@ import { IonicModule } from '@ionic/angular';
     standalone: true,
     imports: [CommonModule, IonicModule],
     template: `
-        <ion-card>
-            <!-- <ion-grid>
-                <ion-row> -->
-                    <!-- <ion-col> -->
-                        <ion-list class="message-container">
-                            <ion-item class="message ion-no-padding ion-no-margin" *ngFor="let message of messages">
-                                <ion-text class="ion-text-wrap">
-                                    <span>{{ message.userId | json }} :</span>
-                                    <ion-text class="message-text">
-                                        {{ message.text | json }}
-                                    </ion-text>
-                                </ion-text>
-                            </ion-item>
-                        </ion-list>
-                        <input id="message-bar" type="text" (keydown.enter)="sendChat($event)">
-                    <!-- </ion-col> -->
-                <!-- </ion-row>
-            </ion-grid> -->
-
-            <!-- <div class="scroll-container"> -->
-                
-            <!-- </div> -->
-            
-            
-            <!-- <div class="message-container">
-                <div class="message" *ngFor="let message of messages">
-                    <pre>
-                        user: {{ message.userId | json }}
-                        message: {{ message.text | json }}
-                        timestamp: {{ message.createdAt }} 
-                    </pre>
-                </div>
-            </div> -->
-            
-        </ion-card>
+        <div class="wrapper">
+            <ion-list class="message-list">
+                <ion-item class="message ion-no-padding ion-no-margin" *ngFor="let message of messages">
+                    <ion-text class="ion-text-wrap">
+                        <span>{{ message.userId | json }} :</span>
+                        <ion-text class="message-text">
+                            {{ message.text | json }}
+                        </ion-text>
+                    </ion-text>
+                </ion-item>
+            </ion-list>
+            <input class="message-bar" type="text" (keydown.enter)="sendChat($event)">
+        </div>
+        <!-- <div class="message-container">
+            <div class="message" *ngFor="let message of messages">
+                <pre>
+                    user: {{ message.userId | json }}
+                    message: {{ message.text | json }}
+                    timestamp: {{ message.createdAt }} 
+                </pre>
+            </div>
+        </div> -->
     `,
     styles: [`
         :host{
-            > :nth-child(1) {
-                padding: 0.7rem;
-                /* max-height: 100%; */
-                height: 50vh;
-                overflow-y: hidden;
+            --bg-color: gainsboro;
+        }
+        .wrapper{
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+
+            height: 100vh;
+            width: 100vw;
+            background-color: var(--bg-color);
+            padding: 1rem;
+            @media (orientation: "portrait") {
+                height: 100svh;
             }
         }
-        ion-list.message-container{
-            /* max-height: 100%; */
-            /* min-height: 100vh; */
-            /* min-height: 100%; */
-            height: 50%;
+        ion-list.message-list{
             overflow-y: scroll;
             overflow-x: hidden;
 
             padding: 0;
             padding-bottom: 0.2rem;
             
-            /* display: flex;
-            flex-direction: column;
-            justify-content: end; */
+            background-color: var(--bg-color);
         }
         ion-item.message{
             --padding-top: 0px;
@@ -86,8 +75,10 @@ import { IonicModule } from '@ionic/angular';
             
             /* --ripple-color: transparent; */
             --border-color: transparent;
+            --background: transparent;
 
             --min-height: 0px;
+            background-color: var(--bg-color);
 
             & .message-text{
                 padding-left: 0.5ch;
@@ -97,13 +88,15 @@ import { IonicModule } from '@ionic/angular';
         }
 
 
-        #message-bar{
-            /* position: absolute;
-            bottom: 0; */
+        .message-bar{
             width: 100%;
+            height: 2rem;
+            height: 3.5ch;
         }
-        input{
+        input.message-bar{
             background-color: rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            /* box-shadow: inset 0px 1px 8px rgba(0, 0, 0, 0.2); */
         }
     `]
 })
@@ -119,10 +112,12 @@ export class RoomsChatroomComponent implements OnInit {
     @Input() roomId: string;
     // messages;
     messages = [];
-    isFirstLoad = true;
+    isFirstLoad: boolean = true;
     constructor(private readonly roomsService: RoomsService, private readonly auth: Auth, private readonly authService: AuthService){
         // console.log(authService.loggedInUser);
         // console.log("IT WORKED");
+        // this.isFirstLoad = true;
+        console.log(this.isFirstLoad);
         
     }
 
@@ -143,24 +138,30 @@ export class RoomsChatroomComponent implements OnInit {
             //scroll to bottom of messageContainer to latest message element
             setTimeout(()=>{
                 // console.log(messageContainer);
-                let messageElems = document.querySelector('.message-container').children; //.scrollIntoView({behavior: "smooth"});                
+                let messageElems = document.querySelector('.message-list').children; //.scrollIntoView({behavior: "smooth"});
                 if (messageElems.length >= 2){
                     if (this.isFirstLoad){
-                        messageElems[messageElems.length - 2].scrollIntoView({behavior: 'auto'});
+                        // messageElems[messageElems.length - 2].scrollIntoView({behavior: 'auto'});
+                        document.querySelector('.message-list').scrollTo({
+                            top: getElementBottom(messageElems[messageElems.length - 2]),
+                            behavior: "auto",
+                        })
                         this.isFirstLoad = false;
                     } else {
-                        messageElems[messageElems.length - 2].scrollIntoView({behavior: 'smooth'});
+                        // messageElems[messageElems.length - 2].scrollIntoView({behavior: 'smooth'});
+                        document.querySelector('.message-list').scrollTo({
+                            top: getElementBottom(messageElems[messageElems.length - 2]),
+                            behavior: "smooth",
+                        })
                     }
                 } 
-                
-            }, 5)
+            }, 50)
         
             
         })
     }
 
-    ngAfterViewInit() {
-        
+    ngAfterViewInit() {   
     }
 
     async sendChat(event){
@@ -180,6 +181,25 @@ export class RoomsChatroomComponent implements OnInit {
         event.target.value = "";
     }
 
-    
+}
 
+
+
+//returns an element's top position relative to the whole document (body):
+function getElementTop(element){
+    // values returned by getBoundingClientRect is affected by scrolling
+    const rect = element.getBoundingClientRect(); //rect.top, rect.right, rect.bottom, rect.left);
+    const top = rect.top;
+    //so we add the value by the viewport top, to get the relative top position of the element
+    return top + window.scrollY;
+}
+
+
+//returns an element's bottom position relative to the whole document (body):
+function getElementBottom(element){
+    // values returned by getBoundingClientRect is affected by scrolling
+    const rect = element.getBoundingClientRect(); //rect.top, rect.right, rect.bottom, rect.left);
+    const top = rect.top;
+    //so we add the value by the viewport top, to get the relative top position of the element
+    return top + window.scrollY + element.offsetHeight;
 }
