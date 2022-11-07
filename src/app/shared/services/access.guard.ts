@@ -35,7 +35,7 @@ export class AccessGuard implements CanActivate {
         }
         if (requiresLogin){
             //Logic to check if user is logged in..
-            console.log('loading...');
+            console.log('accessGuard - loading...');
 
             // Create an Observable out of an async function with rxjs.from()
             // (An observable represents a stream, or source of data that can arrive over time.)
@@ -45,8 +45,8 @@ export class AccessGuard implements CanActivate {
 
             //return the Observable stream through a pipe, manipulating the data returned by the stream. 
             return loggedInStatus.pipe(
-                tap(x => console.log("starting pipe")),
-                tap(x => console.log(x)),
+                // tap(x => console.log("starting pipe")),
+                // tap(x => console.log(x)),
                 map(loginStatus => loginStatus || this.router.createUrlTree([''])),
             )
             // //old function

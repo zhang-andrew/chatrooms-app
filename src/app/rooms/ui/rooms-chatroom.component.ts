@@ -18,7 +18,7 @@ import { IonicModule } from '@ionic/angular';
             <ion-list class="message-list">
                 <ion-item class="message ion-no-padding ion-no-margin" *ngFor="let message of messages">
                     <ion-text class="ion-text-wrap">
-                        <span>{{ message.userId | json }} :</span>
+                        <span>{{ message.displayName | json }} :</span>
                         <ion-text class="message-text">
                             {{ message.text | json }}
                         </ion-text>
@@ -113,15 +113,19 @@ export class RoomsChatroomComponent implements OnInit {
     // messages;
     messages = [];
     isFirstLoad: boolean = true;
-    constructor(private readonly roomsService: RoomsService, private readonly auth: Auth, private readonly authService: AuthService){
+    constructor(private readonly roomsService: RoomsService, 
+        private readonly auth: Auth, 
+        private readonly authService: AuthService){
         // console.log(authService.loggedInUser);
         // console.log("IT WORKED");
         // this.isFirstLoad = true;
-        console.log(this.isFirstLoad);
+        // console.log(this.isFirstLoad);
+
+        
         
     }
 
-    ngOnInit(): void{
+    async ngOnInit(){
 
         // const messageContainer = document.getElementById('message-container');
         // console.log(messageContainer);
@@ -129,47 +133,77 @@ export class RoomsChatroomComponent implements OnInit {
         //Input properties isn't initialized until view is set up so generally you can access input value on ngOnInit()
         // console.log("room messages: "+this.roomId);
         // console.log(this.roomsService.getMessagesByRoomId(this.roomId));
-        const unsubscribe = this.roomsService.subscribeToRoomMessages(this.roomId, (newMessages) => {
-            // console.log()
+        const unsubscribe = await this.roomsService.subscribeToRoomMessages(this.roomId, (newMessages) => {
+            console.log(this.isFirstLoad);
             this.messages = [...this.messages, ...newMessages];
+            
             // return newMessages
 
             //I guess we have to wait for the ng* for loop to generate a new message. then:
             //scroll to bottom of messageContainer to latest message element
             setTimeout(()=>{
-                // console.log(messageContainer);
                 let messageElems = document.querySelector('.message-list').children; //.scrollIntoView({behavior: "smooth"});
+                console.log(messageElems.length);
                 if (messageElems.length >= 2){
                     if (this.isFirstLoad){
                         // messageElems[messageElems.length - 2].scrollIntoView({behavior: 'auto'});
                         document.querySelector('.message-list').scrollTo({
-                            top: getElementBottom(messageElems[messageElems.length - 2]),
+                            top: this.getElementBottom(messageElems[messageElems.length - 2]),
                             behavior: "auto",
                         })
                         this.isFirstLoad = false;
                     } else {
                         // messageElems[messageElems.length - 2].scrollIntoView({behavior: 'smooth'});
                         document.querySelector('.message-list').scrollTo({
-                            top: getElementBottom(messageElems[messageElems.length - 2]),
+                            top: this.getElementBottom(messageElems[messageElems.length - 2]),
                             behavior: "smooth",
                         })
                     }
                 } 
-            }, 50)
-        
+            }, 100)
+            console.count();
+            
             
         })
     }
 
     ngAfterViewInit() {   
+
+        
+        //some angular magic - tl;dr: using setTimeout makes your code async, by adding a function execution to the event loop, and triggering change detection a second time when it executes. It does have a performance hit.
+        setTimeout(()=>{
+
+            // let messageElems = (<HTMLInputElement>document.querySelector('.message-list')); //.scrollIntoView({behavior: "smooth"});
+            // console.log(messageElems.hasChildNodes);
+            // let messages = document.querySelectorAll('.message');
+            // console.log(messages);
+            
+            
+            // document.querySelector('.message-list').scrollTo({
+            //     top: this.getElementBottom(messageElems[messageElems.length - 2]),
+            //     behavior: "smooth",
+            // })
+
+            //autofocus on messeage bar
+            const messageBar = (<HTMLInputElement>document.querySelector('.message-bar'));
+            messageBar.focus();
+            messageBar.select();
+        }, 10)
+
     }
 
     async sendChat(event){
+        if (event.target.value == ""){
+            return
+        }
         console.log("sent message: "+ event.target.value);
+        console.log(this.authService.currentUser.displayName);
+        
         //save
         const message: MessageData = {
             // messageId: generateRandom(),
             userId: this.auth.currentUser.uid,
+            displayName: this.authService.currentUser.displayName,
             // createdAt: "",
             text: event.target.value,
             roomId: this.roomId
@@ -179,6 +213,16 @@ export class RoomsChatroomComponent implements OnInit {
 
         //reset input
         event.target.value = "";
+    }
+
+
+    //returns an element's bottom position relative to the whole document (body):
+    private getElementBottom(element){
+        // values returned by getBoundingClientRect is affected by scrolling
+        const rect = element.getBoundingClientRect(); //rect.top, rect.right, rect.bottom, rect.left);
+        const top = rect.top;
+        //so we add the value by the viewport top, to get the relative top position of the element
+        return top + window.scrollY + element.offsetHeight;
     }
 
 }
@@ -194,12 +238,3 @@ function getElementTop(element){
     return top + window.scrollY;
 }
 
-
-//returns an element's bottom position relative to the whole document (body):
-function getElementBottom(element){
-    // values returned by getBoundingClientRect is affected by scrolling
-    const rect = element.getBoundingClientRect(); //rect.top, rect.right, rect.bottom, rect.left);
-    const top = rect.top;
-    //so we add the value by the viewport top, to get the relative top position of the element
-    return top + window.scrollY + element.offsetHeight;
-}

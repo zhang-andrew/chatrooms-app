@@ -23,16 +23,48 @@ import { UserModel } from './user.model';
 })
 export class AuthService {
     isLoggedIn: Boolean = false;
+    currentUser = {
+        uid: null,
+        displayName: null,
+    }
+
     constructor(private readonly auth: Auth, private readonly router: Router, private readonly userModel: UserModel){
         console.log("AUTHSERVICE INITIALISED");
-        this.auth.onAuthStateChanged(user => {
-            if (user){
+
+        this.auth.onAuthStateChanged( async (authUser) => {
+            // console.log("AUTHUSERSTATECHANGE");
+            if (authUser){
                 this.isLoggedIn = true;
+                this.currentUser.uid = this.auth.currentUser.uid;
+
+                const dbUser = await this.userModel.getUser(this.auth.currentUser.uid);
+                this.currentUser.displayName = dbUser['displayName'];
+                // console.log(dbUser);
+
             } else {
                 this.isLoggedIn = false;
+                this.currentUser.uid = null;
             }
+            console.log("AUTHSTATE CHANGED: CURRENTUSER: "+JSON.stringify(this.currentUser));
         })
+
+        // if (this.isLoggedIn){
+        //     //sync with database for other object properties.
+        //     const dbUser = this.userModel.getUser(this.auth.currentUser.uid)
+        //         .then(dbUser => {
+        //             console.log(dbUser);
+        //             this.currentUser.displayName = dbUser['displayName'];
+        //             console.log("AUTHSERVICE CURRENTUSER: "+JSON.stringify(this.currentUser));
+        //         })
+        //         .catch(e => {console.log(e);
+        //         })
+        // } else {
+        //     console.log("not logged in");
+            
+        // }
     }
+
+
 
     //methods
     async login({email, password}: LoginData) {
@@ -59,6 +91,11 @@ export class AuthService {
                 const guestCredential = await signInAnonymously(this.auth);
                 //Signed in
                 this.router.navigate(['/rooms']);
+
+                //Is a new user (guest user), create a userData in database
+                const newUser = await this.userModel.createUser(guestCredential.user); // const result = await this.createUserData(user);
+                console.log("logged in as guest, new user.");
+
                 resolve(guestCredential);
             } catch (error) {
                 reject({
@@ -126,6 +163,8 @@ export class AuthService {
         console.log("logging out");
         // this.authenticationStatus = false;
         if (this.auth.currentUser.isAnonymous){
+            this.userModel.deleteUser(this.auth.currentUser.uid);
+            console.log("deleting anonymous user");
             return this.auth.currentUser.delete(); //delete() also signsOut();
         }
         return signOut(this.auth);
@@ -148,6 +187,12 @@ export class AuthService {
             })
         })
     }
+
+    // async subscribeToLoggedInUser(callback){
+    //     if (this.isLoggedIn = true){
+    //         this.userModel.subscribeToUser(this.currentUser.uid, callback);
+    //     }
+    // }
 }
 
 

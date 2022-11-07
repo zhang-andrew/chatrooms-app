@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { RoomsService } from 'src/app/shared/services/rooms.service';
 import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { UsersService } from 'src/app/shared/services/users.service';
 
 @Component({
     selector: 'app-rooms-list',
@@ -54,32 +55,38 @@ import { Router } from '@angular/router';
 export class RoomsListComponent implements OnInit {
     // @Input() rooms: any[] | undefined;
     @Input() rooms;
-    constructor(private readonly roomsService: RoomsService, private readonly auth: Auth, private readonly router:Router) {}
+    constructor(
+        private readonly roomsService: RoomsService, 
+        private readonly auth: Auth, 
+        private readonly router:Router,
+        private readonly usersService: UsersService,) {}
 
     ngOnInit(): void {
     }
     
     async joinRoom(roomId){
         event.preventDefault();
-        let userId = this.auth.currentUser.uid;
-        let roomData = await this.roomsService.getRoom(roomId);
-        let existingMembers = roomData['members'];
-        let updatedMembersList = [...existingMembers, userId];
-        if (![...roomData['members']].includes(userId)){
+        //navigate to room
+        this.router.navigate(['/rooms', roomId]);
+
+        //update rooms.members
+        const userData = await this.usersService.getUser(this.auth.currentUser.uid);
+        const displayName = userData.displayName;
+
+        const roomData = await this.roomsService.getRoom(roomId);
+        const existingMembers = roomData['members'];
+        const updatedMembers = [...existingMembers, displayName];
+        if (![...roomData['members']].includes(displayName)){
             const updatedRoomData: RoomData = {
                 roomId: roomData['roomId'],
                 roomPassword: roomData['roomPassword'],
-                members: updatedMembersList,
+                members: updatedMembers,
             }
             //update members list
             this.roomsService.updateRoom(updatedRoomData);
         } 
-        
-        //navigate to room
-        this.router.navigate(['/rooms', roomId]);
-        // this.router.navigate(['/rooms']);
-        // this.router.routerlin
     }
+    
     async deleteRoom(roomId){
         event.preventDefault();
         let d = await this.roomsService.deleteRoom(roomId);

@@ -20,6 +20,7 @@ export class MessageModel{
             messageId: docRef.id, //auto generated id
             roomId: message.roomId,
             userId: message.userId,
+            displayName: message.displayName,
             createdAt: serverTimestamp(),
             text: message.text
         });

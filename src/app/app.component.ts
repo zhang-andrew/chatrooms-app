@@ -23,16 +23,15 @@ import { AuthService } from './shared/services/auth.service';
             <ion-content class="ion-padding">
                 <ion-list class="">
                     <ion-item>
-                        <ion-button expand="block" fill="clear" href="/rooms">
+                        <ion-button expand="block" fill="clear" (click)="navigateTo('/rooms')">
                             <span>
                                 <ion-icon slot="icon-only" name="chatbubbles-outline"></ion-icon>
                                 <div slot="start">Rooms</div>
-                                
                             </span>
                         </ion-button>
                     </ion-item>
                     <ion-item>
-                        <ion-button expand="block" fill="clear" href="/users">
+                        <ion-button expand="block" fill="clear" (click)="navigateTo('/users')">
                             <span>
                                 <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
                                 <div slot="start">Profile</div>
@@ -64,12 +63,12 @@ import { AuthService } from './shared/services/auth.service';
             <ion-grid>
                 <ion-row class="ion-justify-content-between ion-align-items-center ion-padding">
                     <ion-col size="auto">
-                        <a href="/">
-                            <ion-button class="logo-button" [href]="">
+                        <!-- <a href="/"> -->
+                            <ion-button class="logo-button" (click)="navigateTo('/')">
                                 <ion-icon name="people-circle-outline"></ion-icon>
                                 Chatrooms
                             </ion-button>        
-                        </a>
+                        <!-- </a> -->
                     </ion-col>
                     <ion-col size="auto">
                         <ion-toolbar>
@@ -156,6 +155,9 @@ export class AppComponent {
     }
     ngOnInit(): void {
         this.sideMenu = document.querySelector(".side-menu");
+        // this.authService.subscribeToLoggedInUser((userUpdates)=>{
+        //     this.authService.currentUser.displayName = userUpdates.displayName;
+        // })
     }
     
     attemptLogout(){
@@ -164,12 +166,33 @@ export class AppComponent {
                 this.router.navigate(['/']);
                 //hide menu
                 this.sideMenu.close();
-                document.querySelector(".wrapper").classList.remove("disabled");
-                document.querySelector(".spinner").classList.remove("active");
+                try {
+                    document.querySelector(".wrapper").classList.remove("disabled");
+                    document.querySelector(".spinner").classList.remove("active");    
+                } catch (error) {
+                }
+                
             })
             .catch((e) => { 
-                console.log(e.message);
+                console.error(e.message);
             })
+    }
+    navigateTo(path){
+        //show spinner
+
+        //navigate
+        this.router.navigate([path]).then(()=>{
+            console.log("LOADED!");
+            // this.showSpinner = false;
+        })
+
+        //hide menu
+        this.sideMenu.close();
+        try {
+            document.querySelector(".wrapper").classList.remove("disabled");
+            document.querySelector(".spinner").classList.remove("active");            
+        } catch (error) {
+        }
     }
 
 }

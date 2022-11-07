@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore } from "@angular/fire/firestore";
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
-import { UserData } from "../interfaces/user-data.interface";
+import { collection, deleteDoc, doc, DocumentReference, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { UpdatedUserData, UserData } from "../interfaces/user-data.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -30,7 +30,7 @@ export class UserModel{
             const user = docSnapshot.data();
             return user; 
         } else {
-            console.log("Document does not exist");
+            console.log("getUser: Document does not exist");
             return null
         }
     }
@@ -49,15 +49,20 @@ export class UserModel{
     }
     ////////////
     // UPDATE //
-    async updateUser(user: UserData) {
+    async updateUser(user: UpdatedUserData) {
         const docRef = doc(this.db, `users/${user.uid}`);
-        const updatedUser = await updateDoc(docRef, {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,    
-            // photoURL: user.photoURL,
-            // emailVerified: false,
-        });
+        const data = {};
+        for (const [key, value] of Object.entries(user)){ 
+            data[key] = value;
+        }
+        const updatedUser = await updateDoc(docRef, data);
+        // const updatedUser = await updateDoc(docRef, {
+        //     uid: user.uid,
+        //     email: user.email,
+        //     displayName: user.displayName,    
+        //     // photoURL: user.photoURL,
+        //     // emailVerified: false,
+        // });
         return updatedUser;
     }
     ////////////
@@ -66,5 +71,33 @@ export class UserModel{
         const docRef = doc(this.db, `users/${uid}`);
         const deletedUser = await deleteDoc(docRef); 
         return deletedUser;
+    }
+
+    ////////////
+    // LISTEN // 
+    async subscribeToUser(uid: UserData['uid'], callback: Function){
+        //get reference to entire collection.
+        const docRef = doc(this.db, `users/${uid}`);
+        return onSnapshot(docRef, ( docSnapshot ) => {
+            // //get all documents (including changed and unchanged documents)
+            // const docSnapshots = querySnapshot.docs;
+            
+            //only get changed documents (*note: first iteration returns all documents though)
+            const changes = docSnapshot.data();
+            const user = docSnapshot.data();
+            // const docSnapshots = changes.map( change => change.doc);
+            // const rooms = docSnapshots.map( doc => {doc.data()});
+
+            // const rooms = changes.map( change => {
+            //     return {
+            //         type: change.type,
+            //         data: change.doc.data()
+            //     }
+            // })
+
+            if (callback){
+                callback(user);
+            }
+        })
     }
 }

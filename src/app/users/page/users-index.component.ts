@@ -14,6 +14,15 @@ import { CommonModule } from '@angular/common';
         * {
             background-color: red;
         }
+        :host{
+            & > :nth-child(1){
+                height: 100%;
+                width: 100%;
+                /* background-color: red; */
+                position: relative;
+                padding-top: 20%;
+            }
+        }
     `]
 })
 export class UsersIndexComponent implements OnInit {
