@@ -15,20 +15,33 @@ import { IonicModule } from '@ionic/angular';
             rooms-id works!
         </p> -->
         <div>
-            <app-rooms-chatroom [roomId]="roomId"></app-rooms-chatroom>
+            <ion-card class="page disabled">
+                <app-rooms-chatroom [roomId]="roomId"></app-rooms-chatroom>
+            </ion-card>
+            
         </div>
         
     `,
     styles: [`
         :host{
             & > :nth-child(1){
-                display: grid;
+                /* display: grid;
                 place-content: center;
                 position: absolute;
                 inset: 0;
                 height: 100%;
+                width: 100%; */
+                height: 100%;
                 width: 100%;
+                /* background-color: red; */
+                position: relative;
+                padding: 1rem;
+                /* padding-top: 5rem; */
             }
+        }
+        .disabled {
+            pointer-events: none;
+            opacity: 0.4;
         }
 
     `]

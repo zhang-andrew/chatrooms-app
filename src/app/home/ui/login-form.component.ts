@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { SingletonService } from 'src/app/shared/services/singleton.service';
 
 
 @Component({
@@ -58,13 +59,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
                 </ion-card-content>
             </ion-card>
 
-            <div class="spinner">
-                <ion-grid>
-                    <ion-row class="ion-justify-content-center">
-                        <ion-spinner name="crescent"></ion-spinner>
-                    </ion-row>
-                </ion-grid>
-            </div>
+            
         </div>
 
     `,
@@ -92,12 +87,12 @@ import { AuthService } from 'src/app/shared/services/auth.service';
         /* .provider-btn::part(native) {
         } */
 
-        .disabled {
+        /* .disabled {
             pointer-events: none;
             opacity: 0.4;
-        }
+        } */
 
-        .spinner {
+        /* .spinner {
             position: absolute !important;
             top: 50%;
             left: 50%;
@@ -107,7 +102,7 @@ import { AuthService } from 'src/app/shared/services/auth.service';
             &.active{
                 display: block;
             }
-        }
+        } */
         
     `]
 })
@@ -120,7 +115,10 @@ export class LoginFormComponent implements OnInit {
     // form: FormGroup; //that we want to fill
 
     //constructors
-    constructor(private formBuilder: FormBuilder, private readonly authService: AuthService, private readonly router: Router) { }
+    constructor(private formBuilder: FormBuilder, 
+        private readonly authService: AuthService, 
+        private readonly router: Router,
+        private readonly singletonService: SingletonService) { }
 
     ngOnInit(): void {
         // this.form = this.formBuilder.group({
@@ -143,12 +141,15 @@ export class LoginFormComponent implements OnInit {
 
     async loginOnSubmit(){
         //turn on spinner, disable form
-        document.querySelector(".wrapper").classList.add("disabled");
-        document.querySelector(".spinner").classList.add("active");
+        this.disablePages();
+        // document.querySelector(".spinner").classList.add("active");
 
         const formValues = this.loginForm.value; //returns an object containing form values
         this.authService.login(formValues)
-            .then(result => console.log(result))
+            .then(result => {
+                console.log(result)
+                this.enablePages();
+            })
             .catch(error => {
                 //if error turn off spinner, reenable form
                 document.querySelector(".wrapper").classList.remove("disabled");
@@ -159,8 +160,8 @@ export class LoginFormComponent implements OnInit {
 
     async loginAsGuest(){
         //turn on spinner, disable form
-        document.querySelector(".wrapper").classList.add("disabled");
-        document.querySelector(".spinner").classList.add("active");
+        this.disablePages();
+        // document.querySelector(".spinner").classList.add("active");
 
         this.authService.loginAsGuest()
             .then(result => {
@@ -173,17 +174,44 @@ export class LoginFormComponent implements OnInit {
 
     loginWithGoogle(){
         //turn on spinner, disable form
-        document.querySelector(".wrapper").classList.add("disabled");
-        document.querySelector(".spinner").classList.add("active");
+        // document.querySelector(".wrapper").classList.add("disabled");
+        this.disablePages();
+        // document.querySelector(".spinner").classList.add("active");
 
         // this.authService.loginWithGoogle();
         this.authService.loginWithProvider("google")
-            .then(result => console.log(result))
+            .then(result => {
+                console.log(result)
+                this.enablePages();
+            })
             .catch(error => {
                 //if error turn off spinner, reenable form
-                document.querySelector(".wrapper").classList.remove("disabled");
-                document.querySelector(".spinner").classList.remove("active");
+                this.enablePages();
+                // document.querySelector(".spinner").classList.remove("active");
                 console.log(error)
             });
+    }
+
+    private disablePages(){
+        //enable spinner
+        this.singletonService.props.showSpinner = true;
+
+        //disable all pages
+        const pageElements = document.querySelectorAll('.page');
+        pageElements.forEach((page) => {
+            page.classList.add("disabled");
+            console.log(page.classList);
+        })
+        
+    }
+    private enablePages(){
+        //enable all pages
+        const pageElements = document.querySelectorAll('.page');
+        pageElements.forEach((page) => {
+            page.classList.remove("disabled");
+            console.log(page.classList);
+        })
+        //disable spinner
+        this.singletonService.props.showSpinner = false;
     }
 }

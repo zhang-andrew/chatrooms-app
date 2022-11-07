@@ -37,8 +37,8 @@ export class AuthService {
                 this.isLoggedIn = true;
                 this.currentUser.uid = this.auth.currentUser.uid;
 
-                const dbUser = await this.userModel.getUser(this.auth.currentUser.uid);
-                this.currentUser.displayName = dbUser['displayName'];
+                // const dbUser = await this.userModel.getUser(this.auth.currentUser.uid);
+                // this.currentUser.displayName = dbUser['displayName'];
                 // console.log(dbUser);
 
             } else {
@@ -89,12 +89,13 @@ export class AuthService {
         return new Promise( async(resolve, reject) => {
             try {
                 const guestCredential = await signInAnonymously(this.auth);
-                //Signed in
-                this.router.navigate(['/rooms']);
 
                 //Is a new user (guest user), create a userData in database
                 const newUser = await this.userModel.createUser(guestCredential.user); // const result = await this.createUserData(user);
                 console.log("logged in as guest, new user.");
+
+                //navigate
+                this.router.navigate(['/rooms']);
 
                 resolve(guestCredential);
             } catch (error) {
@@ -161,12 +162,22 @@ export class AuthService {
     }
     logout(){
         console.log("logging out");
-        // this.authenticationStatus = false;
+
+        //reset local currentUser object
+        this.currentUser = {
+            uid: null,
+            displayName: null,
+        }
+
+        //if anonymous guest user
         if (this.auth.currentUser.isAnonymous){
             this.userModel.deleteUser(this.auth.currentUser.uid);
             console.log("deleting anonymous user");
+
             return this.auth.currentUser.delete(); //delete() also signsOut();
         }
+
+        //sign out normally
         return signOut(this.auth);
     }
 

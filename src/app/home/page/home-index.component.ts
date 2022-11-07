@@ -13,7 +13,7 @@ import { IonicModule } from '@ionic/angular';
     imports: [CommonModule, LoginFormComponent, RegisterFormComponent, IonicModule],
     template: `
         <div>
-            <ion-card>
+            <ion-card class="page">
                 <ion-segment value="login" (ionChange)="segmentChanged($event)">
                     <ion-segment-button value="login">
                         <ion-label>Login</ion-label>
@@ -35,6 +35,10 @@ import { IonicModule } from '@ionic/angular';
             display: grid;
             
             place-content: center;
+        }
+        .disabled {
+            pointer-events: none;
+            opacity: 0.4;
         }
     `]
 })

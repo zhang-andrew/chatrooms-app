@@ -1,15 +1,20 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from './shared/services/auth.service';
+import { UsersService } from './shared/services/users.service';
 // import { AuthService } from './services/auth.service';
 // import { AngularFireAuth } from '@angular/fire/auth';
 // import { auth } from 'firebase/app';
+
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SingletonService } from './shared/services/singleton.service';
 
 @Component({
     selector: 'app-root',
     // templateUrl: './app.component.html',
     // styleUrls: ['./app.component.scss'],
     template: `
+        <!-- MENU -->
         <ion-menu class="side-menu" contentId="main-content" type="overlay" side="end">
             <ion-header class="ion-no-border">
                 <ion-menu-toggle>
@@ -35,18 +40,9 @@ import { AuthService } from './shared/services/auth.service';
                             <span>
                                 <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
                                 <div slot="start">Profile</div>
-
                             </span>
                         </ion-button>
                     </ion-item>
-                    <!-- <ion-item>
-                        <ion-button expand="block" fill="clear" >
-                            <span>
-                                <ion-icon slot="icon-only" name="log-in-outline"></ion-icon>
-                                <div slot="start">Log in</div>
-                            </span>
-                        </ion-button>
-                    </ion-item> -->
                     <ion-item>
                         <ion-button expand="block" fill="clear" (click)="attemptLogout()">
                             <span>
@@ -59,12 +55,13 @@ import { AuthService } from './shared/services/auth.service';
             </ion-content>
         </ion-menu>
 
+        <!-- HEADER -->
         <ion-header class="ion-no-border">
             <ion-grid>
                 <ion-row class="ion-justify-content-between ion-align-items-center ion-padding">
                     <ion-col size="auto">
                         <!-- <a href="/"> -->
-                            <ion-button class="logo-button" (click)="navigateTo('/')">
+                            <ion-button class="logo-button" (click)="navigateTo('/rooms')">
                                 <ion-icon name="people-circle-outline"></ion-icon>
                                 Chatrooms
                             </ion-button>        
@@ -81,11 +78,45 @@ import { AuthService } from './shared/services/auth.service';
                 </ion-row>
             </ion-grid>
         </ion-header>
-        <!-- <app-top-bar></app-top-bar> -->
-        <!-- <app-header></app-header> -->
-        <!-- <router-outlet id="main-content"></router-outlet> -->
-        <ion-router-outlet id="main-content"></ion-router-outlet>
 
+        <!--  -->
+        <!-- ROUTER -->
+        <!--  -->
+        <!-- <router-outlet id="main-content"></router-outlet> -->
+        <ion-router-outlet id="main-content" ></ion-router-outlet>
+
+        <!-- MODAL: createDisplayName  -->
+        <ng-container *ngIf="showModalCreateDisplayName == true">
+            <div class="display-name__modal">
+                <ion-card class="display-name__card">
+                
+                    <form [formGroup]="displayNameForm" (ngSubmit)="createDisplayNameOnSubmit()" (keydown.enter)="createDisplayNameOnSubmit()">
+                        <ion-title>Create a display name</ion-title>
+                        <ion-list>
+                            <ion-item>
+                                <ion-input placeholder="John Doe..." formControlName="displayName" required></ion-input>
+                            </ion-item>
+                            <div class="az-validation-errors" *ngIf="displayNameInput?.hasError('required')">
+                                <ion-text color="danger">Cannot be empty.</ion-text>
+                            </div>
+                        </ion-list>
+                        
+                        <ion-button role="button" type="submit" color="tertiary">Create</ion-button>
+                    </form>
+                    
+                </ion-card>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="this.singletonService.props.showSpinner == true">
+            <div class="spinner">
+                <ion-grid>
+                    <ion-row class="ion-justify-content-center">
+                        <ion-spinner name="crescent"></ion-spinner>
+                    </ion-row>
+                </ion-grid>
+            </div>
+        </ng-container>
+        
         <!-- <div>Toast Notifications</div> -->
     `,
     styles: [`
@@ -144,23 +175,120 @@ import { AuthService } from './shared/services/auth.service';
         ion-text[slot='start']{
             font-size: 2rem;
         }
+
+
+        .display-name{
+            &__modal{
+                position: absolute;
+                /* inset: 0; */
+                top: 50%;
+                left: 50%;
+                transform: translateX(-50%) translateY(-50%);
+                width: 50%;
+                height: 50%;
+                background-color: white;
+                border-radius: 5px;
+                z-index: 999;
+            }
+            &__card{
+                height: 100%;
+
+                form{
+                    padding: 1rem;
+                    height: 100%;
+                }
+            }
+        }
+        .spinner {
+            position: absolute !important;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            /* display: none; */
+            /* &.active{
+                display: block;
+            } */
+        }
     `]
 })
 export class AppComponent {
     title = 'chatrooms';
     sideMenu;
 
+    // showSpinner = this.singletonService.props.showSpinner;
+    showModalCreateDisplayName = false;
+    displayNameForm: FormGroup;
 
-    constructor(private authService: AuthService, private router: Router){    
+    constructor(private authService: AuthService, private router: Router, private usersService: UsersService,
+        private readonly formBuilder: FormBuilder,
+        public singletonService: SingletonService){    
+        // console.log(this.showSpinner);
+            
     }
+
+    get displayNameInput(){
+        return this.displayNameForm.get('display-name');   
+    }
+
     ngOnInit(): void {
+        //assign variable
         this.sideMenu = document.querySelector(".side-menu");
-        // this.authService.subscribeToLoggedInUser((userUpdates)=>{
-        //     this.authService.currentUser.displayName = userUpdates.displayName;
-        // })
+        //create form
+        this.displayNameForm = this.formBuilder.group({
+            "displayName": ['', [Validators.required]]
+        })
+
+        //router navigation subscription
+        this.router.events.subscribe( async(event) => {
+            // event instanceof NavigationStart
+            if (event instanceof NavigationEnd){
+                console.log(event.url)
+                console.log(this.authService.currentUser);
+
+
+                
+                if (event.url == "/"){
+                    this.showModalCreateDisplayName = false;
+
+                } else if (event.url == "/rooms" || event.url.startsWith('/rooms')){
+                    //disable all pages - //reset disabled status
+                    const pageElements = document.querySelectorAll('.page');
+                    pageElements.forEach((page) => {
+                        page.classList.add("disabled");
+                        console.log(page.classList);
+                    })
+
+                    const dbUser = await this.usersService.getUser(this.authService.currentUser.uid);
+
+                    if (dbUser['displayName'] != null){
+                        console.log("Found valid displayName");
+                        //enable pages
+                        pageElements.forEach((page) => {
+                            page.classList.remove("disabled");
+                            console.log(page.classList);
+                        })
+                        this.authService.currentUser.displayName = dbUser['displayName'];
+                    } else {
+                        console.log("DisplayName not valid: "+JSON.stringify(this.authService.currentUser));
+                        this.showModalCreateDisplayName = true;
+                    }
+                } else if (event.url == "/users"){
+                    console.log("PROFILE /users");
+                }
+
+
+                //if rooms.id
+                    //scroll down to bottom of messageList
+
+            //    this.routerChangeMethod(event.url);
+            }
+         })
     }
     
     attemptLogout(){
+        //start spinner
+        this.singletonService.props.showSpinner = true;
+
         this.authService.logout()
             .then(() => {
                 this.router.navigate(['/']);
@@ -171,6 +299,14 @@ export class AppComponent {
                     document.querySelector(".spinner").classList.remove("active");    
                 } catch (error) {
                 }
+                //enable pages again
+                const pageElements = document.querySelectorAll('.page');
+                pageElements.forEach((page) => {
+                    page.classList.remove("disabled");
+                    console.log(page.classList);
+                })
+                //hide spinner
+                this.singletonService.props.showSpinner = false;
                 
             })
             .catch((e) => { 
@@ -195,4 +331,30 @@ export class AppComponent {
         }
     }
 
+
+
+
+    async createDisplayNameOnSubmit(){
+        const formValues = this.displayNameForm.value; //returns an object containing form values
+        if (formValues.displayName == ""){
+            console.log('error... inputValue is: ""');
+            return
+        }
+        const changedFields = {
+            "uid": this.authService.currentUser.uid,
+            "displayName": formValues.displayName
+        }
+    
+        //update server dbUser
+        await this.usersService.updateUser(changedFields);
+        console.log("created a display name");
+        //update local authUser
+        this.authService.currentUser.displayName = formValues.displayName;
+        
+        this.singletonService.props.showSpinner = false;
+        this.showModalCreateDisplayName = false;
+        document.querySelectorAll('.page').forEach((page)=>{
+            page.classList.remove('disabled');
+        })
+    }
 }

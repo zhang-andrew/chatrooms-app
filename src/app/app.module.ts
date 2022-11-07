@@ -20,8 +20,11 @@ import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import {
 // import { AuthService } from './shared/services/auth.service';
 
 import { IonicModule, IonIcon } from '@ionic/angular';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { HeaderComponent } from '../../_OLD/header.component';
+
+import { SingletonService } from './shared/services/singleton.service';
 // import { AuthService } from './shared/services/auth.service';
 
 // import { UserLoginComponent } from './_OLD/pages/components/user-login/user-login.component';
@@ -47,6 +50,7 @@ import { HeaderComponent } from '../../_OLD/header.component';
         BrowserModule,
         AppRoutingModule,
         IonicModule.forRoot(),
+        ReactiveFormsModule,
         // HttpClientModule,
         //firebase
         provideFirebaseApp(() => {
@@ -71,6 +75,7 @@ import { HeaderComponent } from '../../_OLD/header.component';
         // AuthService,
         { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
         // AuthService
+        SingletonService
     ],
     //?i dunno what bootstrap[] is?
     bootstrap: [AppComponent]

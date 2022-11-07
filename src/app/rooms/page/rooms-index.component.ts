@@ -10,31 +10,23 @@ import { AuthService } from 'src/app/shared/services/auth.service';
 import { UpdatedUserData, UserData } from 'src/app/shared/interfaces/user-data.interface';
 import { Auth } from '@angular/fire/auth';
 
+import { IonicModule } from '@ionic/angular';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-rooms-index',
     standalone: true,
-    imports: [CommonModule, RoomsListComponent],
+    imports: [CommonModule, RoomsListComponent, IonicModule],
     template: `
         <div>
-            <div class="rooms-index disabled">
-                <p>
-                    rooms-index works!
-                </p>
-                <div class="action-btns">
-                    <button (click)="createNewRoom()">Create Room</button>
-                </div>
+            <ion-card class="page disabled">
+                <ion-header class="ion-no-border">
+                    <ion-toolbar>
+                        <ion-button (click)="createNewRoom()"> Create Room</ion-button>
+                    </ion-toolbar>
+                </ion-header>
                 <app-rooms-list [rooms]="rooms"></app-rooms-list>
-            </div>
-
-            <ng-container *ngIf="showModalCreateDisplayName == true">
-                <div class="modal-create-display-name">
-                    Create a display name
-                    <input class="input-display-name" type="text">
-                    <!-- <input class="input-display-name" type="text" (input)="changeDisplayNameExample()"> -->
-                    <button (click)="createDisplayName($event)">Create</button>
-                </div>
-            </ng-container>
+            </ion-card>
         </div>
     `,
     styles: [`
@@ -44,58 +36,39 @@ import { Auth } from '@angular/fire/auth';
                 width: 100%;
                 /* background-color: red; */
                 position: relative;
-                padding-top: 20%;
+                padding: 1rem;
+                padding-top: 5rem;
+                
             }
         }
+        /* .rooms-index{
+            height: 100%;
+        } */
         .disabled {
             pointer-events: none;
             opacity: 0.4;
-        }
-        .modal-create-display-name{
-            position: absolute;
-            /* inset: 0; */
-            top: 50%;
-            left: 50%;
-            transform: translateX(-50%) translateY(-50%);
-            width: 50%;
-            height: 50%;
-            background-color: white;
-            outline: 1px solid black;
-            outline-offset: -1px;
-            margin: 1rem;
-            padding: 1rem;
         }
     `]
 })
 export class RoomsIndexComponent implements OnInit {
     rooms = [];
     isFirstLoad = true;
-    showModalCreateDisplayName = false;
-    constructor(private readonly roomsService: RoomsService, 
-        private readonly authService: AuthService,
-        private readonly usersService: UsersService,
-        private readonly auth: Auth){ 
-        // console.log("CONSTRUCTOR()");
-
-        
+    // showModalCreateDisplayName = false;
+    // displayNameForm: FormGroup;
+    constructor(private readonly roomsService: RoomsService,){ 
     }
 
-    async ngOnInit() {
-        // if userData has displayName
-        const userData = await this.usersService.getUser(this.auth.currentUser.uid);
-        if (userData['displayName'] != null){
-            console.log("Found valid displayName");
-            this.enablePage();
-        } else {
-            console.log("DisplayName not valid: "+JSON.stringify(this.authService.currentUser));
-            this.showModalCreateDisplayName = true;
-        }        
+    ngOnInit(): void {
     }
-    ngAfterViewInit() {   
-        // console.log("NG AFTER VIEW INIT");
 
+    ngOnChanges(): void {
+    }
 
+    ngOnDestroy(): void {   
+    }
 
+    ngAfterViewInit(): void {   
+        //Deals with room changes for the rooms list.
         //save to unsubscribe variable so when this component is not rendered, unmount the subscription snapshot
         //first query snapshot returns all existing documents.
         const unsubscribe = this.roomsService.subscribeToRooms((changedRooms) => {
@@ -134,11 +107,6 @@ export class RoomsIndexComponent implements OnInit {
         });
     }
 
-    ngOnChanges(): void {
-        // const unsubscribe = this.roomsService.getRoomsAndSubscribe();
-    }
-
-
     
     async createNewRoom(){
         const roomData: RoomData = {
@@ -149,43 +117,13 @@ export class RoomsIndexComponent implements OnInit {
         }
         await this.roomsService.createRoom(roomData);
     }
+}
 
 
 
-    async createDisplayName(event){
-        event.preventDefault();
-        const inputValue = (<HTMLInputElement>document.querySelector('.input-display-name')).value;
-        if (inputValue == ""){
-            console.log("error... inputValue is: "+ inputValue);
-            return
-        }
-
-        // let d = input.value
-        const changedFields = {
-            "uid": this.authService.currentUser.uid,
-            "displayName": String(inputValue)
-        }
-        //update server dbUser
-        await this.usersService.updateUser(changedFields);
-        console.log("created a display name: "+inputValue);
-        //update local authUser
-        this.authService.currentUser.displayName = inputValue;
-        
-        this.showModalCreateDisplayName = false;
-        this.enablePage();
-        
-    }
-
-
-
-
-    private enablePage() {
-        document.querySelector('.rooms-index').classList.remove("disabled");
-    }
     // private checkForDisplayName(){
     //     console.log("checkForDisplayName ran.");
-        
-        
+            
     // }
         
 
@@ -195,4 +133,4 @@ export class RoomsIndexComponent implements OnInit {
     //     console.log(input);
     // }
 
-}
+
