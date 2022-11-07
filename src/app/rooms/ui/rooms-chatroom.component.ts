@@ -160,7 +160,7 @@ export class RoomsChatroomComponent implements OnInit {
                         })
                     }
                 } 
-            }, 100)
+            }, 50)
             console.count();
             
             
@@ -170,25 +170,25 @@ export class RoomsChatroomComponent implements OnInit {
     ngAfterViewInit() {   
 
         
-        //some angular magic - tl;dr: using setTimeout makes your code async, by adding a function execution to the event loop, and triggering change detection a second time when it executes. It does have a performance hit.
-        setTimeout(()=>{
+        // //some angular magic - tl;dr: using setTimeout makes your code async, by adding a function execution to the event loop, and triggering change detection a second time when it executes. It does have a performance hit.
+        // setTimeout(()=>{
 
-            // let messageElems = (<HTMLInputElement>document.querySelector('.message-list')); //.scrollIntoView({behavior: "smooth"});
-            // console.log(messageElems.hasChildNodes);
-            // let messages = document.querySelectorAll('.message');
-            // console.log(messages);
+        //     // let messageElems = (<HTMLInputElement>document.querySelector('.message-list')); //.scrollIntoView({behavior: "smooth"});
+        //     // console.log(messageElems.hasChildNodes);
+        //     // let messages = document.querySelectorAll('.message');
+        //     // console.log(messages);
             
             
-            // document.querySelector('.message-list').scrollTo({
-            //     top: this.getElementBottom(messageElems[messageElems.length - 2]),
-            //     behavior: "smooth",
-            // })
+        //     // document.querySelector('.message-list').scrollTo({
+        //     //     top: this.getElementBottom(messageElems[messageElems.length - 2]),
+        //     //     behavior: "smooth",
+        //     // })
 
-            //autofocus on messeage bar
-            const messageBar = (<HTMLInputElement>document.querySelector('.message-bar'));
-            messageBar.focus();
-            messageBar.select();
-        }, 10)
+        //     //autofocus on messeage bar
+        //     const messageBar = (<HTMLInputElement>document.querySelector('.message-bar'));
+        //     messageBar.focus();
+        //     messageBar.select();
+        // }, 10)
 
     }
 
