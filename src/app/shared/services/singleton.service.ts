@@ -6,7 +6,12 @@ import { Injectable } from '@angular/core';
 export class SingletonService {
     props = {
         showSpinner: false,
+
     }
     constructor(){
     }
 }
+
+
+//this helped with the singleton service idea v ref below
+// https://stackoverflow.com/questions/41451375/passing-data-into-router-outlet-child-components

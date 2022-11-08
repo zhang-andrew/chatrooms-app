@@ -18,14 +18,14 @@ import { SingletonService } from './shared/services/singleton.service';
         <ion-menu class="side-menu" contentId="main-content" type="overlay" side="end">
             <ion-header class="ion-no-border">
                 <ion-menu-toggle>
-                    <ion-button class="x-button ion-padding" color="light">
+                    <ion-button class="x-button ion-padding" color="light" >
                         <span>
                             <ion-icon slot="icon-only" name="close-outline"></ion-icon>
                         </span>
                     </ion-button>
                 </ion-menu-toggle>
             </ion-header>
-            <ion-content class="ion-padding">
+            <ion-content class="ion-padding side-menu-content">
                 <ion-list class="">
                     <ion-item>
                         <ion-button expand="block" fill="clear" (click)="navigateTo('/rooms')">
@@ -56,7 +56,7 @@ import { SingletonService } from './shared/services/singleton.service';
         </ion-menu>
 
         <!-- HEADER -->
-        <ion-header class="ion-no-border">
+        <ion-header class="ion-no-border" [ngStyle]="{'visibility': this.showHeader ? 'visible' : 'hidden'}">
             <ion-grid>
                 <ion-row class="ion-justify-content-between ion-align-items-center ion-padding">
                     <ion-col size="auto">
@@ -68,12 +68,15 @@ import { SingletonService } from './shared/services/singleton.service';
                         <!-- </a> -->
                     </ion-col>
                     <ion-col size="auto">
-                        <ion-toolbar>
+                        <ion-toolbar *ngIf="this.authService.isLoggedIn">
                             <ion-buttons slot="start">
                                 <!-- <ion-menu-button auto-hide="false"></ion-menu-button> -->
                                 <ion-menu-button auto-hide="false"></ion-menu-button>
                             </ion-buttons>
-                        </ion-toolbar>  
+                        </ion-toolbar> 
+                        <ion-toolbar [ngStyle]="styleObject()">
+                            <ion-button class="menu-button-login" color="tertiary" (click)="navigateTo('/login')">Log in</ion-button>
+                        </ion-toolbar> 
                     </ion-col>
                 </ion-row>
             </ion-grid>
@@ -89,21 +92,29 @@ import { SingletonService } from './shared/services/singleton.service';
         <ng-container *ngIf="showModalCreateDisplayName == true">
             <div class="display-name__modal">
                 <ion-card class="display-name__card">
-                
-                    <form [formGroup]="displayNameForm" (ngSubmit)="createDisplayNameOnSubmit()" (keydown.enter)="createDisplayNameOnSubmit()">
+                    <ion-header class="ion-no-border ion-padding">
                         <ion-title>Create a display name</ion-title>
-                        <ion-list>
-                            <ion-item>
-                                <ion-input placeholder="John Doe..." formControlName="displayName" required></ion-input>
-                            </ion-item>
-                            <div class="az-validation-errors" *ngIf="displayNameInput?.hasError('required')">
-                                <ion-text color="danger">Cannot be empty.</ion-text>
-                            </div>
-                        </ion-list>
-                        
-                        <ion-button role="button" type="submit" color="tertiary">Create</ion-button>
-                    </form>
+                    </ion-header>
                     
+                    <form [formGroup]="displayNameForm" (ngSubmit)="createDisplayNameOnSubmit()" (keydown.enter)="createDisplayNameOnSubmit()">
+                        <!-- <ion-content> -->
+                        <!-- <div class=""> -->
+                            <ion-list>
+                                <ion-item>
+                                    <ion-input placeholder="John Doe..." formControlName="displayName" required></ion-input>
+                                </ion-item>
+                                <!-- <div class="az-validation-errors" *ngIf="displayNameInput?.hasError('required')">
+                                    <ion-text color="danger">Cannot be empty.</ion-text>
+                                </div> -->
+                            </ion-list>
+
+                            <div class="ion-float-right">
+                                <ion-button role="button" type="submit" color="tertiary">Create</ion-button>    
+                            </div>
+                        <!-- </div> -->
+                            
+                        <!-- </ion-content>                         -->
+                    </form>
                 </ion-card>
             </div>
         </ng-container>
@@ -120,11 +131,43 @@ import { SingletonService } from './shared/services/singleton.service';
         <!-- <div>Toast Notifications</div> -->
     `,
     styles: [`
-        :host{}
-        ion-header{
+        :host{
+            position: relative;
+        }
+        ion-header, .side-menu-content{
             /* outline: 1px dashed rgba(5,5,5,0.2);
             outline-offset: -1px; */
             background-color: gainsboro;
+            background-color: rgb(246, 249, 254);
+            --background: rgb(246, 249, 254);
+            
+        }
+        .side-menu-content{
+            ion-list{
+                --background: transparent;
+                --ion-background-color: transparent;
+            }
+            ion-item{
+                --background: transparent;
+                --background-color: transparent;
+            }
+            ion-button{
+                --background: transparent;
+                --background-color: transparent;
+                
+            }
+            ion-button{
+                height: 100%;
+                width: 100%;
+                --box-shadow: none;
+                span{
+                    /* text-align:left; */
+                    width:100%;
+                    display: flex;
+                    justify-content: start;
+                    align-items: center;
+                }
+            }
         }
         ion-toolbar{
             --background: transparent;
@@ -137,10 +180,17 @@ import { SingletonService } from './shared/services/singleton.service';
                 padding-right: 0.3rem;
             }
         }
+        .menu-button-login{
+            padding: 0;
+            --padding-top: 16px;
+            --padding-bottom: 16px;
+        }
         .x-button{
             /* --box-shadow: none; */
             /* --background: transparent; */
             /* --color: black; */
+            height: 100%;
+            --box-shadow: none;
             width: auto;
             float: right;
         }
@@ -155,18 +205,7 @@ import { SingletonService } from './shared/services/singleton.service';
             --inner-padding-top: 0px;
             --inner-padding-bottom: 0px;
         }
-        ion-button{
-            height: 100%;
-            width: 100%;
-            --box-shadow: none;
-            span{
-                /* text-align:left; */
-                width:100%;
-                display: flex;
-                justify-content: start;
-                align-items: center;
-            }
-        }
+        
         ion-icon[slot='icon-only']{
             padding-left: 0.5rem;
             padding-right: 0.5rem;
@@ -180,22 +219,39 @@ import { SingletonService } from './shared/services/singleton.service';
         .display-name{
             &__modal{
                 position: absolute;
-                /* inset: 0; */
+                /* height: 100vh;
+                width: 100vw; */
                 top: 50%;
                 left: 50%;
+                width: 80%;
+                /* height: 50%; */
                 transform: translateX(-50%) translateY(-50%);
-                width: 50%;
-                height: 50%;
-                background-color: white;
+                
+                /* background-color: white; */
+                /* outline: 1px dashed red;
+                outline-offset: -1px; */
                 border-radius: 5px;
                 z-index: 999;
+                
             }
             &__card{
-                height: 100%;
-
+                /* min-height: 30%; */
+                
+                margin-left: auto;
+                margin-right: auto;
+                width: 80%;
+                height: 200px;
+                padding: 1rem;
+                /* transform: translateY(50%); */
+                ion-header{
+                    background-color: white;
+                }
                 form{
-                    padding: 1rem;
-                    height: 100%;
+                    /* padding: 1rem; */
+                    /* height: 100%; */
+                    /* display: flex;
+                    flex-direction: column;
+                    justify-content: space-between; */
                 }
             }
         }
@@ -216,10 +272,11 @@ export class AppComponent {
     sideMenu;
 
     // showSpinner = this.singletonService.props.showSpinner;
+    showHeader = true;
     showModalCreateDisplayName = false;
     displayNameForm: FormGroup;
 
-    constructor(private authService: AuthService, private router: Router, private usersService: UsersService,
+    constructor(public authService: AuthService, private router: Router, private usersService: UsersService,
         private readonly formBuilder: FormBuilder,
         public singletonService: SingletonService){    
         // console.log(this.showSpinner);
@@ -245,11 +302,15 @@ export class AppComponent {
                 console.log(event.url)
                 console.log(this.authService.currentUser);
 
+                //reset header
+                this.showHeader = true;
 
-                
                 if (event.url == "/"){
                     this.showModalCreateDisplayName = false;
-
+                    
+                } else if (event.url == "/login") {
+                    //hide header for login page
+                    this.showHeader = false;
                 } else if (event.url == "/rooms" || event.url.startsWith('/rooms')){
                     //disable all pages - //reset disabled status
                     const pageElements = document.querySelectorAll('.page');
@@ -287,27 +348,17 @@ export class AppComponent {
     
     attemptLogout(){
         //start spinner
-        this.singletonService.props.showSpinner = true;
+        // this.singletonService.props.showSpinner = true;
+        this.disablePages();
+
+        //hide menu
+        this.sideMenu.close();
 
         this.authService.logout()
             .then(() => {
                 this.router.navigate(['/']);
-                //hide menu
-                this.sideMenu.close();
-                try {
-                    document.querySelector(".wrapper").classList.remove("disabled");
-                    document.querySelector(".spinner").classList.remove("active");    
-                } catch (error) {
-                }
-                //enable pages again
-                const pageElements = document.querySelectorAll('.page');
-                pageElements.forEach((page) => {
-                    page.classList.remove("disabled");
-                    console.log(page.classList);
-                })
-                //hide spinner
-                this.singletonService.props.showSpinner = false;
-                
+
+                this.enablePages();
             })
             .catch((e) => { 
                 console.error(e.message);
@@ -357,4 +408,45 @@ export class AppComponent {
             page.classList.remove('disabled');
         })
     }
+
+
+    styleObject(): Object {
+        if (this.authService.isLoggedIn){
+            return {display: "none"}
+        } else if (this.authService.isLoggedIn == false){
+            return {display: "block"}
+        } else {
+            return {visibility: "hidden", display: "block"}
+        }
+        
+        // if (/** YOUR CONDITION TO SHOW THE STYLES*/  ){
+        //     return {height: this.height,width: this.width}
+        // }
+        return {}
+    }
+
+    private disablePages(){
+        //enable spinner
+        this.singletonService.props.showSpinner = true;
+
+        //disable all pages
+        const pageElements = document.querySelectorAll('.page');
+        pageElements.forEach((page) => {
+            page.classList.add("disabled");
+            console.log(page.classList);
+        })
+        
+    }
+    private enablePages(){
+        //enable all pages
+        const pageElements = document.querySelectorAll('.page');
+        pageElements.forEach((page) => {
+            page.classList.remove("disabled");
+            console.log(page.classList);
+        })
+        //disable spinner
+        this.singletonService.props.showSpinner = false;
+    }
 }
+
+

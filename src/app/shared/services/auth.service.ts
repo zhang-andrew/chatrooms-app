@@ -22,13 +22,14 @@ import { UserModel } from './user.model';
   providedIn: 'root'
 })
 export class AuthService {
-    isLoggedIn: Boolean = false;
+    isLoggedIn: Boolean = null;
     currentUser = {
         uid: null,
         displayName: null,
     }
 
-    constructor(private readonly auth: Auth, private readonly router: Router, private readonly userModel: UserModel){
+    constructor(private readonly auth: Auth, 
+        private readonly router: Router, private readonly userModel: UserModel){
         console.log("AUTHSERVICE INITIALISED");
 
         this.auth.onAuthStateChanged( async (authUser) => {

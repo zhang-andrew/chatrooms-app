@@ -14,7 +14,7 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
     imports: [CommonModule, ReactiveFormsModule, IonicModule],
     template: `
         <div class="wrapper">
-            <ion-list >
+            <ion-list lines="none">
                 <ion-item>
                     <ion-button class="provider-btn az-text-transform-none" color="dark" (click)="loginAsGuest()" >
                         <!-- <ion-icon slot="start" name="logo-google"></ion-icon> -->
@@ -29,9 +29,9 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
                 </ion-item>
             </ion-list>
             
-            <div class="ion-text-center ion-padding">
+            <!-- <div class="ion-text-center ion-padding">
                 OR
-            </div>
+            </div> -->
 
             <ion-card>
                 <ion-card-content>
@@ -117,7 +117,7 @@ export class LoginFormComponent implements OnInit {
     //constructors
     constructor(private formBuilder: FormBuilder, 
         private readonly authService: AuthService, 
-        private readonly router: Router,
+        // private readonly router: Router,
         private readonly singletonService: SingletonService) { }
 
     ngOnInit(): void {
@@ -152,9 +152,10 @@ export class LoginFormComponent implements OnInit {
             })
             .catch(error => {
                 //if error turn off spinner, reenable form
-                document.querySelector(".wrapper").classList.remove("disabled");
-                document.querySelector(".spinner").classList.remove("active");
+                // document.querySelector(".wrapper").classList.remove("disabled");
+                // document.querySelector(".spinner").classList.remove("active");
                 console.log(error)
+                this.enablePages();
             });
     }
 
