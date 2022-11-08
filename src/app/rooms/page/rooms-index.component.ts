@@ -18,15 +18,19 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
     standalone: true,
     imports: [CommonModule, RoomsListComponent, IonicModule],
     template: `
-        <div>
-            <ion-card class="page disabled">
-                <ion-header class="ion-no-border">
-                    <ion-toolbar>
+        <div class="page disabled">
+            <ion-content>
+                <!-- <ion-list lines="none"> -->
+                <ion-item lines="none">
+                    <div class="action-btn-container">
                         <ion-button (click)="createNewRoom()"> Create Room</ion-button>
-                    </ion-toolbar>
-                </ion-header>
+                    </div>
+                </ion-item>
+                <!-- <ion-item> -->
                 <app-rooms-list [rooms]="rooms"></app-rooms-list>
-            </ion-card>
+                <!-- </ion-item> -->
+                <!-- </ion-list> -->
+            </ion-content>
         </div>
     `,
     styles: [`
@@ -37,7 +41,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
                 /* background-color: red; */
                 position: relative;
                 padding: 1rem;
-                padding-top: 5rem;
+                padding-top: 6rem;
                 
             }
         }
@@ -47,6 +51,17 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
         .disabled {
             pointer-events: none;
             opacity: 0.4;
+        }
+        ion-content, ion-list, ion-item{
+            background-color: transparent;
+            --background-color: transparent;
+            --background: transparent;
+        }
+        .action-btn-container{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
         }
     `]
 })

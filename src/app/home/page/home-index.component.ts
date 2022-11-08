@@ -19,22 +19,35 @@ import { IonicModule } from '@ionic/angular';
                     <div class="ion-text-center" style="width: 100%">
                         <ion-text class="ion-text-wrap ">
                             <h1>
-                                Chat live with other users on Chatrooms.
+                                Chat live to other users with this simple messenger app.
                             </h1>
+                        </ion-text>
+                    </div>
+                </ion-item>
+                <ion-item>
+                    <div class="ion-text-center" style="width: 100%">
+                        <ion-text class="ion-text-wrap ">
+                            <h2>
+                                Try it out <a href="/login">here</a>.
+                            </h2>
                         </ion-text>
                     </div>
                 </ion-item>
                 <ion-item>
                     <div  class="ion-text-center" style="width: 100%">
                         <ion-text class="ion-text-wrap">
-                            This web app was designed as a personal project to learn the Angular framework.
+                            This web app was developed as a personal project to learn the Angular <ion-icon name="logo-angular"></ion-icon> framework.
                         </ion-text>
+                        
                     </div>
                 </ion-item>
                 <ion-item class="ion-padding">
-                    <ion-text>
-                        - Andrew Z.
-                    </ion-text>
+                    <ion-button href="https://github.com/zhang-andrew">
+                        <ion-icon name="logo-github"></ion-icon>
+                        <ion-text class="ion-text-lowercase">
+                            &#160;/zhang-andrew
+                        </ion-text>
+                    </ion-button>
                 </ion-item>
             </ion-list>
             

@@ -11,32 +11,19 @@ import { IonicModule } from '@ionic/angular';
     standalone: true,
     imports: [CommonModule, IonicModule, RoomsChatroomComponent],
     template: `
-        <!-- <p>
-            rooms-id works!
-        </p> -->
-        <div>
-            <ion-card class="page disabled">
-                <app-rooms-chatroom [roomId]="roomId"></app-rooms-chatroom>
-            </ion-card>
-            
+        <div class="page disabled">
+            <app-rooms-chatroom [roomId]="roomId"></app-rooms-chatroom>
         </div>
-        
     `,
     styles: [`
         :host{
             & > :nth-child(1){
-                /* display: grid;
-                place-content: center;
-                position: absolute;
-                inset: 0;
-                height: 100%;
-                width: 100%; */
                 height: 100%;
                 width: 100%;
                 /* background-color: red; */
                 position: relative;
                 padding: 1rem;
-                /* padding-top: 5rem; */
+                padding-top: 6rem;
             }
         }
         .disabled {

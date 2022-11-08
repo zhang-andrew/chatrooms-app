@@ -25,7 +25,7 @@ import { IonicModule } from '@ionic/angular';
                     </ion-text>
                 </ion-item>
             </ion-list>
-            <input class="message-bar" type="text" (keydown.enter)="sendChat($event)">
+            <ion-input class="message-bar" type="text" (keydown.enter)="sendChat($event)"  placeholder="Enter text"></ion-input>
         </div>
         <!-- <div class="message-container">
             <div class="message" *ngFor="let message of messages">
@@ -39,20 +39,24 @@ import { IonicModule } from '@ionic/angular';
     `,
     styles: [`
         :host{
+            height: 100%;
+            width: 100%;
             --bg-color: gainsboro;
         }
         .wrapper{
             display: flex;
             flex-direction: column;
-            justify-content: end;
+            justify-content: flex-end;
 
-            height: 100vh;
-            width: 100vw;
+            /* height: 100vh;
+            width: 100vw; */
+            height: 100%;
+            width: 100%;
             background-color: var(--bg-color);
             padding: 1rem;
-            @media (orientation: "portrait") {
+            /* @media (orientation: "portrait") {
                 height: 100svh;
-            }
+            } */
         }
         ion-list.message-list{
             overflow-y: scroll;

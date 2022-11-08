@@ -75,7 +75,7 @@ import { SingletonService } from './shared/services/singleton.service';
                             </ion-buttons>
                         </ion-toolbar> 
                         <ion-toolbar [ngStyle]="styleObject()">
-                            <ion-button class="menu-button-login" color="tertiary" (click)="navigateTo('/login')">Log in</ion-button>
+                            <ion-button class="menu-button-login" fill="clear" (click)="navigateTo('/login')">Log in</ion-button>
                         </ion-toolbar> 
                     </ion-col>
                 </ion-row>
@@ -101,7 +101,8 @@ import { SingletonService } from './shared/services/singleton.service';
                         <!-- <div class=""> -->
                             <ion-list>
                                 <ion-item>
-                                    <ion-input placeholder="John Doe..." formControlName="displayName" required></ion-input>
+                                    <ion-input maxlength="20" placeholder="John Doe..." formControlName="displayName" required></ion-input>
+                                    
                                 </ion-item>
                                 <!-- <div class="az-validation-errors" *ngIf="displayNameInput?.hasError('required')">
                                     <ion-text color="danger">Cannot be empty.</ion-text>
@@ -164,7 +165,7 @@ import { SingletonService } from './shared/services/singleton.service';
                     /* text-align:left; */
                     width:100%;
                     display: flex;
-                    justify-content: start;
+                    justify-content: flex-start;
                     align-items: center;
                 }
             }
