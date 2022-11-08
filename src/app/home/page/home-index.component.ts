@@ -13,10 +13,31 @@ import { IonicModule } from '@ionic/angular';
     imports: [CommonModule, IonicModule], //LoginFormComponent, RegisterFormComponent, IonicModule],
     template: `
         <div class="page">
-            <ion-card>
-                HOME PAGE
-                this is Messenger App
-            </ion-card>
+
+            <ion-list lines="none">
+                <ion-item>
+                    <div class="ion-text-center" style="width: 100%">
+                        <ion-text class="ion-text-wrap ">
+                            <h1>
+                                Chat live with other users on Chatrooms.
+                            </h1>
+                        </ion-text>
+                    </div>
+                </ion-item>
+                <ion-item>
+                    <div  class="ion-text-center" style="width: 100%">
+                        <ion-text class="ion-text-wrap">
+                            This web app was designed as a personal project to learn the Angular framework.
+                        </ion-text>
+                    </div>
+                </ion-item>
+                <ion-item class="ion-padding">
+                    <ion-text>
+                        - Andrew Z.
+                    </ion-text>
+                </ion-item>
+            </ion-list>
+            
             <!-- <ion-card class="page">
                 <ion-segment value="login" (ionChange)="segmentChanged($event)">
                     <ion-segment-button value="login">
@@ -42,6 +63,14 @@ import { IonicModule } from '@ionic/angular';
         .disabled {
             pointer-events: none;
             opacity: 0.4;
+        }
+        ion-item, ion-list{
+            --background: transparent;
+            --background-color: transparent;
+            background-color: transparent;
+            text-align: center;
+        }
+        ion-item{
         }
     `]
 })
