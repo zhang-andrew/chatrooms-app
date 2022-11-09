@@ -15,14 +15,15 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
     template: `
         <div class="wrapper">
             <ion-list lines="none">
-                <ion-item>
-                    <ion-button class="provider-btn az-text-transform-none" color="dark" (click)="loginAsGuest()" >
+                <ion-item class="ion-no-padding">
+                    <ion-button class="provider-btn az-text-transform-none ion-padding" color="dark" (click)="loginAsGuest()" >
                         <!-- <ion-icon slot="start" name="logo-google"></ion-icon> -->
-                        Log in as Guest
+                        <!-- Log in as Guest -->
+                        Log in Anonymously
                     </ion-button>
                 </ion-item>
-                <ion-item>
-                    <ion-button class="provider-btn az-text-transform-none" (click)="loginWithGoogle()" >
+                <ion-item  class="ion-no-padding">
+                    <ion-button class="provider-btn az-text-transform-none ion-padding" (click)="loginWithGoogle()" >
                         <ion-icon slot="start" name="logo-google"></ion-icon>
                         Log in with Google
                     </ion-button>        
@@ -37,24 +38,24 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
                 <ion-card-content>
                     <form [formGroup]="loginForm" (ngSubmit)="loginOnSubmit()" (keydown.enter)="loginOnSubmit()">
                         <ion-list>
-                            <ion-item>
-                                <ion-input placeholder="Email" formControlName="email" required></ion-input>
+                            <ion-item class="ion-no-padding">
+                                <ion-input type="email" placeholder="Email" formControlName="email" required></ion-input>
                             </ion-item>
                             <div class="az-validation-errors" *ngIf="emailInput?.hasError('required')">
                                 <ion-text color="danger">Email cannot be empty.</ion-text>
                             </div>
                             <div class="az-validation-errors" *ngIf="emailInput?.hasError('email')">
-                                <ion-text color="danger">Email isn't valid. Please enter a valid email.</ion-text>
+                                <ion-text  color="danger">Email isn't valid. Please enter a valid email.</ion-text>
                             </div>
 
-                            <ion-item>
-                                <ion-input placeholder="Password" formControlName="password" required></ion-input>
+                            <ion-item class="ion-no-padding">
+                                <ion-input type="password" placeholder="Password" formControlName="password" required></ion-input>
                             </ion-item>
                             <div *ngIf="passwordInput?.hasError('required')">
                                 <ion-text color="danger">Password cannot be empty.</ion-text>
                             </div>
                         </ion-list>
-                        <ion-button role="button" type="submit" color="tertiary">Log In</ion-button>        
+                        <ion-button role="button" class="ion-padding ion-margin" type="submit" color="tertiary">Log In</ion-button>        
                     </form>
                 </ion-card-content>
             </ion-card>
@@ -66,27 +67,54 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
     styles: [`
         :host {
             position: relative;
-            > div{
+            display: block;
+            width: 100%;
+            
+            .wrapper{
+                width: 100%;
                 padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: space-between;
             }
         }
+
         ion-card {
             box-shadow: none !important;
             border: 1px solid rgba(0,0,0,0.1);
+            width: 100%;
+            margin-top: 1rem;
+            /* padding: auto; */
+            
+        }
+        ion-card-content {
+            width: 100%;
         }
 
         ion-button { 
             display: block;
-            width: 100%;
+            /* width: 100%; */
+            padding-top: 0;
+            padding-bottom: 0;
+            padding-left: 0;
+            padding-right: 0;
         }
         ion-button.provider-btn {
             ion-icon{
-                padding-right: 1rem;
+                padding-right: 1ch;
             }
         }
-        /* .provider-btn::part(native) {
-        } */
+        .provider-btn {
+            width: 100%;
+        }
 
+        form{
+            padding: 0.5rem;
+        }
+        /* ion-item{
+            padding: 0;
+        } */
         /* .disabled {
             pointer-events: none;
             opacity: 0.4;
@@ -110,13 +138,14 @@ export class LoginFormComponent implements OnInit {
     //props
     // @Input() authService: AuthService | undefined;
     // @Output() formData: EventEmitter<{ email: string; password: string; }> = new EventEmitter();
-    
+
     loginForm: FormGroup;
     // form: FormGroup; //that we want to fill
+    loadingTime;
 
     //constructors
-    constructor(private formBuilder: FormBuilder, 
-        private readonly authService: AuthService, 
+    constructor(private formBuilder: FormBuilder,
+        private readonly authService: AuthService,
         // private readonly router: Router,
         private readonly singletonService: SingletonService) { }
 
@@ -132,14 +161,14 @@ export class LoginFormComponent implements OnInit {
         })
     }
 
-    get emailInput(){
-        return this.loginForm.get('email');   
+    get emailInput() {
+        return this.loginForm.get('email');
     }
-    get passwordInput(){
-        return this.loginForm.get('password');   
+    get passwordInput() {
+        return this.loginForm.get('password');
     }
 
-    async loginOnSubmit(){
+    async loginOnSubmit() {
         //turn on spinner, disable form
         this.disablePages();
         // document.querySelector(".spinner").classList.add("active");
@@ -159,7 +188,7 @@ export class LoginFormComponent implements OnInit {
             });
     }
 
-    async loginAsGuest(){
+    async loginAsGuest() {
         //turn on spinner, disable form
         this.disablePages();
         // document.querySelector(".spinner").classList.add("active");
@@ -169,11 +198,13 @@ export class LoginFormComponent implements OnInit {
                 console.log(result);
             })
             .catch(error => {
+                console.log("CAUGHT ERROR:");
+
                 console.log(error);
             });
     }
 
-    loginWithGoogle(){
+    loginWithGoogle() {
         //turn on spinner, disable form
         // document.querySelector(".wrapper").classList.add("disabled");
         this.disablePages();
@@ -193,7 +224,7 @@ export class LoginFormComponent implements OnInit {
             });
     }
 
-    private disablePages(){
+    private disablePages() {
         //enable spinner
         this.singletonService.props.showSpinner = true;
 
@@ -203,9 +234,17 @@ export class LoginFormComponent implements OnInit {
             page.classList.add("disabled");
             console.log(page.classList);
         })
-        
+
+
+        //start timer
+        this.loadingTime = setTimeout(() => {
+            console.log("Server unresponsive for 10 seconds.");
+            //Re-enable page.
+            //Do a toast notification, indicating the issue.
+        }, 10000)
+
     }
-    private enablePages(){
+    private enablePages() {
         //enable all pages
         const pageElements = document.querySelectorAll('.page');
         pageElements.forEach((page) => {
@@ -214,5 +253,28 @@ export class LoginFormComponent implements OnInit {
         })
         //disable spinner
         this.singletonService.props.showSpinner = false;
+
+
+        //stop timer
+        clearTimeout(this.loadingTime);
+        console.log("Server responded in time.");
     }
 }
+
+
+
+// let inactivityTime = function () {
+//     let time;
+//     window.onload = resetTimer;
+//     document.onmousemove = resetTimer;
+//     document.onkeypress = resetTimer;
+
+//     function resetTimer() {
+//         clearTimeout(time);
+//         time = setTimeout(() => {
+//             console.log("Server is unresponsive.")
+//         }, 10000)
+//     }
+// };
+//   inactivityTime();
+//   console.log('Please wait...');

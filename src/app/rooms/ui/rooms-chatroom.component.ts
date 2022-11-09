@@ -147,8 +147,6 @@ export class RoomsChatroomComponent implements OnInit {
         // console.log("IT WORKED");
         // this.isFirstLoad = true;
         // console.log(this.isFirstLoad);
-
-        
     }
 
     // ngOnInit(): void {
@@ -187,7 +185,6 @@ export class RoomsChatroomComponent implements OnInit {
             console.log(messageElems.length);
 
             if (messageElems.length >= 2){
-
                 messageElems[messageElems.length - 2].scrollIntoView({
                     behavior: "smooth",
                     block: "start"

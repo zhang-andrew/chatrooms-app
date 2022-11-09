@@ -5,56 +5,88 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
     selector: 'app-register-form',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule],
+    imports: [CommonModule, ReactiveFormsModule, IonicModule],
     template: `
-        <div class="register-form">
-            <h2>
-                Register Here
-            </h2>
-            <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div>
-                    <label>Email</label>
-                    <input formControlName="email" type="text" required>
-                    <div *ngIf="email?.hasError('required')">
-                        Email is required.
-                    </div>
-                    <div *ngIf="email?.hasError('email')">
-                        Email isn't valid. Please enter a valid email.
-                    </div>
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input formControlName="password" type="password" required>
-                    <div *ngIf="password?.hasError('required')">
-                        Password is required
-                    </div>
-                </div>
-                <div>
-                    <button [disabled]="form.invalid">
-                        Submit
-                    </button>
-                </div>
-            </form>
+        <div class="wrapper">
+            
+
+            <ion-card>
+                <ion-card-content>
+                    <form [formGroup]="form" (ngSubmit)="onSubmit()" (keydown.enter)="onSubmit()">
+                        <ion-list>
+                            <ion-item class="ion-no-padding">
+                                <ion-input type="email" placeholder="Email" formControlName="email" required></ion-input>
+                            </ion-item>
+                            <div class="az-validation-errors" *ngIf="emailInput?.hasError('required')">
+                                <ion-text color="danger">Email cannot be empty.</ion-text>
+                            </div>
+                            <div class="az-validation-errors" *ngIf="emailInput?.hasError('email')">
+                                <ion-text  color="danger">Email isn't valid. Please enter a valid email.</ion-text>
+                            </div>
+
+                            <ion-item class="ion-no-padding">
+                                <ion-input type="password" placeholder="Password" formControlName="password" required></ion-input>
+                            </ion-item>
+                            <div *ngIf="passwordInput?.hasError('required')">
+                                <ion-text color="danger">Password cannot be empty.</ion-text>
+                            </div>
+                        </ion-list>
+                        <ion-button role="button" class="ion-padding ion-margin" type="submit" color="tertiary">Sign Up</ion-button>        
+                    </form>
+                </ion-card-content>
+            </ion-card>
+
+            
         </div>
         
     `,
     styles: [`
-        .register-form{
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-
-            outline: 1px dashed red;
-            outline-offset: -1px;
+:host {
+            position: relative;
+            display: block;
+            width: 100%;
+            
+            .wrapper{
+                width: 100%;
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: space-between;
+            }
         }
+
+        ion-card {
+            box-shadow: none !important;
+            border: 1px solid rgba(0,0,0,0.1);
+            width: 100%;
+            /* padding: auto; */
+            
+        }
+        ion-card-content {
+            width: 100%;
+        }
+
+        ion-button { 
+            display: block;
+            /* width: 100%; */
+        }
+        ion-button.provider-btn {
+            ion-icon{
+                padding-right: 1rem;
+            }
+        }
+        .provider-btn {
+            width: 100%;
+        }
+
         form{
-            display: flex;
-            align-items: center;
-            flex-direction: column;
+            padding: 0.5rem;
         }
     `]
 })
@@ -74,10 +106,10 @@ export class RegisterFormComponent implements OnInit {
         })
     }
 
-    get email(){
+    get emailInput(){
         return this.form.get('email');
     }
-    get password(){
+    get passwordInput(){
         return this.form.get('password');
     }
     onSubmit(){
