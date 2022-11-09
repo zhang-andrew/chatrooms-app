@@ -67,6 +67,9 @@ import { IonicModule } from '@ionic/angular';
             }
         }
         /* ion-content, ion-list,  */
+        ion-list{
+            height: 100%;
+        }
         ion-item{
             background-color: transparent;
             --background-color: transparent;

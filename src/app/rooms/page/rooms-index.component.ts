@@ -63,6 +63,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
             align-items: center;
             justify-content: flex-end;
         }
+
+        /* app-rooms-list{
+            height: 100%;
+        } */
     `]
 })
 export class RoomsIndexComponent implements OnInit {

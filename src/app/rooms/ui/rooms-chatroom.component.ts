@@ -38,7 +38,7 @@ import { IonicModule } from '@ionic/angular';
             
             <ion-footer [translucent]="true">
                 <ion-toolbar class="ion-text-wrap">
-                    <ion-textarea class="message-bar" enterkeyhint="send" spellcheck="false" autoGrow="true" inputmode="text" type="text" (keydown.enter)="sendChat($event)" placeholder="Enter text"></ion-textarea>
+                    <ion-textarea class="message-bar" enterkeyhint="send" spellcheck="false" autoGrow="false" inputmode="text" type="text" (keydown.enter)="sendChat($event)" placeholder="Enter text"></ion-textarea>
                     <!-- <ion-input class="message-bar " type="text" (keydown.enter)="sendChat($event)"  placeholder="Enter text"></ion-input> -->
                 </ion-toolbar>
             </ion-footer>
