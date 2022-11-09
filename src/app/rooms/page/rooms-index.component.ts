@@ -41,7 +41,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
                 /* background-color: red; */
                 position: relative;
                 padding: 1rem;
-                padding-top: 6rem;
+                padding-top: 5rem;
                 
             }
         }
@@ -87,6 +87,7 @@ export class RoomsIndexComponent implements OnInit {
         //save to unsubscribe variable so when this component is not rendered, unmount the subscription snapshot
         //first query snapshot returns all existing documents.
         const unsubscribe = this.roomsService.subscribeToRooms((changedRooms) => {
+            
             if (this.isFirstLoad){
                 //...changedRooms returns all rooms on the first retrieval.
                 const serverRooms = changedRooms.map(changedRoom => changedRoom.data)

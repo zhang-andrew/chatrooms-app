@@ -22,8 +22,8 @@ import { IonicModule } from '@ionic/angular';
                 width: 100%;
                 /* background-color: red; */
                 position: relative;
-                padding: 1rem;
-                padding-top: 6rem;
+                /* padding: 1rem; */
+                padding-top: 5rem;
             }
         }
         .disabled {

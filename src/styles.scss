@@ -32,13 +32,14 @@ app-root{
     background-color: #373e42;
     background-color: rgb(246, 249, 254);
 
+    ion-app{}
     //Router-outlet Elements
-    > router-outlet{}
-    > ion-router-outlet{
+    router-outlet{}
+    ion-router-outlet{
         display: block;
         height: 100%;
         @media (orientation: "portrait") {
-            height: 100svh;
+            height: 100svh !important;
             // * {
             //     //to fix zooming behaviour on inputs on ios devices. - ref: That's simply what iOS does when the font on an input field is less than 16px: https://css-tricks.com/16px-or-larger-text-prevents-ios-form-zoom/ Any input field. 
             //     font-size: 16px;
@@ -50,7 +51,7 @@ app-root{
         //push down to accomodate for topbarheight
         // padding-top: var(--top-bar-height);
         outline: 2px dashed green;
-        outline-offset: -7px;
+        outline-offset: -2px;
     }
 }
 

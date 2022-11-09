@@ -11,123 +11,128 @@ import { SingletonService } from './shared/services/singleton.service';
 
 @Component({
     selector: 'app-root',
+    
     // templateUrl: './app.component.html',
     // styleUrls: ['./app.component.scss'],
     template: `
-        <!-- MENU -->
-        <ion-menu class="side-menu" contentId="main-content" type="overlay" side="end">
-            <ion-header class="ion-no-border">
-                <ion-menu-toggle>
-                    <ion-button class="x-button ion-padding" color="light" >
-                        <span>
-                            <ion-icon slot="icon-only" name="close-outline"></ion-icon>
-                        </span>
-                    </ion-button>
-                </ion-menu-toggle>
-            </ion-header>
-            <ion-content class="ion-padding side-menu-content">
-                <ion-list class="">
-                    <ion-item>
-                        <ion-button expand="block" fill="clear" (click)="navigateTo('/rooms')">
+        <ion-app>
+            <!-- MENU -->
+            <ion-menu class="side-menu" contentId="main-content" type="overlay" side="end">
+                <ion-header class="ion-no-border">
+                    <ion-menu-toggle>
+                        <ion-button class="x-button ion-padding" color="light" >
                             <span>
-                                <ion-icon slot="icon-only" name="chatbubbles-outline"></ion-icon>
-                                <div slot="start">Rooms</div>
+                                <ion-icon slot="icon-only" name="close-outline"></ion-icon>
                             </span>
                         </ion-button>
-                    </ion-item>
-                    <ion-item>
-                        <ion-button expand="block" fill="clear" (click)="navigateTo('/users')">
-                            <span>
-                                <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
-                                <div slot="start">Profile</div>
-                            </span>
-                        </ion-button>
-                    </ion-item>
-                    <ion-item>
-                        <ion-button expand="block" fill="clear" (click)="attemptLogout()">
-                            <span>
-                                <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
-                                <div slot="start">Log out</div>
-                            </span>
-                        </ion-button>
-                    </ion-item>
-                </ion-list>
-            </ion-content>
-        </ion-menu>
+                    </ion-menu-toggle>
+                </ion-header>
+                <ion-content class="ion-padding side-menu-content">
+                    <ion-list class="">
+                        <ion-item>
+                            <ion-button expand="block" fill="clear" (click)="navigateTo('/rooms')">
+                                <span>
+                                    <ion-icon slot="icon-only" name="chatbubbles-outline"></ion-icon>
+                                    <div slot="start">Rooms</div>
+                                </span>
+                            </ion-button>
+                        </ion-item>
+                        <ion-item>
+                            <ion-button expand="block" fill="clear" (click)="navigateTo('/users')">
+                                <span>
+                                    <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+                                    <div slot="start">Profile</div>
+                                </span>
+                            </ion-button>
+                        </ion-item>
+                        <ion-item>
+                            <ion-button expand="block" fill="clear" (click)="attemptLogout()">
+                                <span>
+                                    <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+                                    <div slot="start">Log out</div>
+                                </span>
+                            </ion-button>
+                        </ion-item>
+                    </ion-list>
+                </ion-content>
+            </ion-menu>
 
-        <!-- HEADER -->
-        <ion-header class="ion-no-border" [ngStyle]="{'visibility': this.showHeader ? 'visible' : 'hidden'}">
-            <ion-grid>
-                <ion-row class="ion-justify-content-between ion-align-items-center ion-padding">
-                    <ion-col size="auto">
-                        <!-- <a href="/"> -->
-                            <ion-button class="logo-button" (click)="navigateTo('/rooms')">
-                                <ion-icon name="people-circle-outline"></ion-icon>
-                                Chatrooms
-                            </ion-button>        
-                        <!-- </a> -->
-                    </ion-col>
-                    <ion-col size="auto">
-                        <ion-toolbar *ngIf="this.authService.isLoggedIn">
-                            <ion-buttons slot="start">
-                                <!-- <ion-menu-button auto-hide="false"></ion-menu-button> -->
-                                <ion-menu-button auto-hide="false"></ion-menu-button>
-                            </ion-buttons>
-                        </ion-toolbar> 
-                        <ion-toolbar [ngStyle]="styleObject()">
-                            <ion-button class="menu-button-login" fill="clear" (click)="navigateTo('/login')">Log in</ion-button>
-                        </ion-toolbar> 
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
-        </ion-header>
-
-        <!--  -->
-        <!-- ROUTER -->
-        <!--  -->
-        <!-- <router-outlet id="main-content"></router-outlet> -->
-        <ion-router-outlet id="main-content" ></ion-router-outlet>
-
-        <!-- MODAL: createDisplayName  -->
-        <ng-container *ngIf="showModalCreateDisplayName == true">
-            <div class="display-name__modal">
-                <ion-card class="display-name__card">
-                    <ion-header class="ion-no-border ion-padding">
-                        <ion-title>Create a display name</ion-title>
-                    </ion-header>
-                    
-                    <form [formGroup]="displayNameForm" (ngSubmit)="createDisplayNameOnSubmit()" (keydown.enter)="createDisplayNameOnSubmit()">
-                        <!-- <ion-content> -->
-                        <!-- <div class=""> -->
-                            <ion-list>
-                                <ion-item>
-                                    <ion-input maxlength="20" placeholder="John Doe..." formControlName="displayName" required></ion-input>
-                                    
-                                </ion-item>
-                                <!-- <div class="az-validation-errors" *ngIf="displayNameInput?.hasError('required')">
-                                    <ion-text color="danger">Cannot be empty.</ion-text>
-                                </div> -->
-                            </ion-list>
-
-                            <div class="ion-float-right">
-                                <ion-button role="button" type="submit" color="tertiary">Create</ion-button>    
-                            </div>
-                        <!-- </div> -->
-                            
-                        <!-- </ion-content>                         -->
-                    </form>
-                </ion-card>
-            </div>
-        </ng-container>
-        <ng-container *ngIf="this.singletonService.props.showSpinner == true">
-            <div class="spinner">
+            <!-- HEADER -->
+            <ion-header class="ion-no-border" [ngStyle]="{'visibility': this.showHeader ? 'visible' : 'hidden'}">
                 <ion-grid>
-                    <ion-row class="ion-justify-content-center">
-                        <ion-spinner name="crescent"></ion-spinner>
+                    <ion-row class="ion-justify-content-between ion-align-items-center ion-padding">
+                        <ion-col size="auto">
+                            <!-- <a href="/"> -->
+                                <ion-button class="logo-button" (click)="navigateTo('/rooms')">
+                                    <ion-icon name="people-circle-outline"></ion-icon>
+                                    Chatrooms
+                                </ion-button>        
+                            <!-- </a> -->
+                        </ion-col>
+                        <ion-col size="auto">
+                            <ion-toolbar *ngIf="this.authService.isLoggedIn">
+                                <ion-buttons slot="start">
+                                    <!-- <ion-menu-button auto-hide="false"></ion-menu-button> -->
+                                    <ion-menu-button auto-hide="false"></ion-menu-button>
+                                </ion-buttons>
+                            </ion-toolbar> 
+                            <ion-toolbar [ngStyle]="styleObject()">
+                                <ion-button class="menu-button-login" fill="clear" (click)="navigateTo('/login')">Log in</ion-button>
+                            </ion-toolbar> 
+                        </ion-col>
                     </ion-row>
                 </ion-grid>
-            </div>
-        </ng-container>
+            </ion-header>
+
+            <!--  -->
+            <!-- ROUTER -->
+            <!--  -->
+            <!-- <router-outlet id="main-content"></router-outlet> -->
+            <ion-router-outlet id="main-content" ></ion-router-outlet>
+
+            <!-- MODAL: createDisplayName  -->
+            <ng-container *ngIf="showModalCreateDisplayName == true">
+                <div class="display-name__modal">
+                    <ion-card class="display-name__card">
+                        <ion-header class="ion-no-border ion-padding">
+                            <ion-title>Create a display name</ion-title>
+                        </ion-header>
+                        
+                        <form [formGroup]="displayNameForm" (ngSubmit)="createDisplayNameOnSubmit()" (keydown.enter)="createDisplayNameOnSubmit()">
+                            <!-- <ion-content> -->
+                            <!-- <div class=""> -->
+                                <ion-list>
+                                    <ion-item>
+                                        <ion-input maxlength="20" placeholder="John Doe..." formControlName="displayName" required></ion-input>
+                                        
+                                    </ion-item>
+                                    <!-- <div class="az-validation-errors" *ngIf="displayNameInput?.hasError('required')">
+                                        <ion-text color="danger">Cannot be empty.</ion-text>
+                                    </div> -->
+                                </ion-list>
+
+                                <div class="ion-float-right">
+                                    <ion-button role="button" type="submit" color="tertiary">Create</ion-button>    
+                                </div>
+                            <!-- </div> -->
+                                
+                            <!-- </ion-content>                         -->
+                        </form>
+                    </ion-card>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="this.singletonService.props.showSpinner == true">
+                <div class="spinner">
+                    <ion-grid>
+                        <ion-row class="ion-justify-content-center">
+                            <ion-spinner name="crescent"></ion-spinner>
+                        </ion-row>
+                    </ion-grid>
+                </div>
+            </ng-container>
+
+        </ion-app>
+        
         
         <!-- <div>Toast Notifications</div> -->
     `,
@@ -176,6 +181,9 @@ import { SingletonService } from './shared/services/singleton.service';
         .logo-button{
             --box-shadow: none;
             --background: transparent;
+            --background-activated: white;
+            --background-activated-opacity: 0.7;
+            --color-activated: blue;
             --color: black;
             ion-icon{
                 padding-right: 0.3rem;
@@ -314,21 +322,23 @@ export class AppComponent {
                     this.showHeader = false;
                 } else if (event.url == "/rooms" || event.url.startsWith('/rooms')){
                     //disable all pages - //reset disabled status
-                    const pageElements = document.querySelectorAll('.page');
-                    pageElements.forEach((page) => {
-                        page.classList.add("disabled");
-                        console.log(page.classList);
-                    })
+                    this.disablePages();
+                    // const pageElements = document.querySelectorAll('.page');
+                    // pageElements.forEach((page) => {
+                    //     page.classList.add("disabled");
+                    //     console.log(page.classList);
+                    // })
 
                     const dbUser = await this.usersService.getUser(this.authService.currentUser.uid);
 
                     if (dbUser['displayName'] != null){
                         console.log("Found valid displayName");
                         //enable pages
-                        pageElements.forEach((page) => {
-                            page.classList.remove("disabled");
-                            console.log(page.classList);
-                        })
+                        this.enablePages();
+                        // pageElements.forEach((page) => {
+                        //     page.classList.remove("disabled");
+                        //     console.log(page.classList);
+                        // })
                         this.authService.currentUser.displayName = dbUser['displayName'];
                     } else {
                         console.log("DisplayName not valid: "+JSON.stringify(this.authService.currentUser));
