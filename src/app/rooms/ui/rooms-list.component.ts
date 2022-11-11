@@ -94,6 +94,7 @@ import { IonicModule } from '@ionic/angular';
 export class RoomsListComponent implements OnInit {
     // @Input() rooms: any[] | undefined;
     @Input() rooms;
+    
     constructor(
         private readonly roomsService: RoomsService, 
         private readonly auth: Auth, 

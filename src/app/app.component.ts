@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { AuthService } from './shared/services/auth.service';
 import { UsersService } from './shared/services/users.service';
@@ -37,14 +37,14 @@ import { SingletonService } from './shared/services/singleton.service';
                                 </span>
                             </ion-button>
                         </ion-item>
-                        <ion-item>
+                        <!-- <ion-item>
                             <ion-button expand="block" fill="clear" (click)="navigateTo('/users')">
                                 <span>
                                     <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
                                     <div slot="start">Profile</div>
                                 </span>
                             </ion-button>
-                        </ion-item>
+                        </ion-item> -->
                         <ion-item>
                             <ion-button expand="block" fill="clear" (click)="attemptLogout()">
                                 <span>
@@ -285,6 +285,9 @@ export class AppComponent {
     showModalCreateDisplayName = false;
     displayNameForm: FormGroup;
 
+    previousUrl: string = null;
+    currentUrl: string = null;
+
     constructor(public authService: AuthService, private router: Router, private usersService: UsersService,
         private readonly formBuilder: FormBuilder,
         public singletonService: SingletonService){    
@@ -296,6 +299,8 @@ export class AppComponent {
         return this.displayNameForm.get('display-name');   
     }
 
+
+
     ngOnInit(): void {
         //assign variable
         this.sideMenu = document.querySelector(".side-menu");
@@ -306,8 +311,21 @@ export class AppComponent {
 
         //router navigation subscription
         this.router.events.subscribe( async(event) => {
-            // event instanceof NavigationStart
+            // if (event instanceof NavigationStart){
+            //     if (event.url.startsWith('/rooms/')){// && this.previousUrl == this.currentUrl){
+            //         const browserRefresh = !this.router.navigated;
+            //         // let isFirstRefresh = true
+            //         if (browserRefresh){
+            //             console.log("Refresh happened in a chatroom, rerouting to '/rooms'" + browserRefresh);
+            //             this.router.navigate([event.url], { skipLocationChange: true })
+            //             // return;
+            //         }
+            //     }
+            // }
+
             if (event instanceof NavigationEnd){
+                this.previousUrl = this.currentUrl;
+                this.currentUrl = event.url;
                 console.log(event.url)
                 console.log(this.authService.currentUser);
 
@@ -323,6 +341,10 @@ export class AppComponent {
                 } else if (event.url == "/rooms" || event.url.startsWith('/rooms')){
                     //disable all pages - //reset disabled status
                     this.disablePages();
+
+
+
+                    //   });
                     // const pageElements = document.querySelectorAll('.page');
                     // pageElements.forEach((page) => {
                     //     page.classList.add("disabled");
@@ -365,6 +387,10 @@ export class AppComponent {
         //hide menu
         this.sideMenu.close();
 
+        //unsubscribe to onsnapshot listeners
+        
+
+        //logout
         this.authService.logout()
             .then(() => {
                 this.router.navigate(['/']);
@@ -444,7 +470,7 @@ export class AppComponent {
         const pageElements = document.querySelectorAll('.page');
         pageElements.forEach((page) => {
             page.classList.add("disabled");
-            console.log(page.classList);
+            // console.log(page.classList);
         })
         
     }
@@ -453,7 +479,7 @@ export class AppComponent {
         const pageElements = document.querySelectorAll('.page');
         pageElements.forEach((page) => {
             page.classList.remove("disabled");
-            console.log(page.classList);
+            // console.log(page.classList);
         })
         //disable spinner
         this.singletonService.props.showSpinner = false;

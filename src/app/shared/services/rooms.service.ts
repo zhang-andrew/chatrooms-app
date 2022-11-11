@@ -80,11 +80,13 @@ export class RoomsService {
     // LISTEN //
     ////////////
     async subscribeToRooms(callback){
-        this.roomModel.subscribeToRooms(callback);
+        const subscription = this.roomModel.subscribeToRooms(callback);
+        return subscription
     }
 
     async subscribeToRoomMessages(roomId, callback){
-        this.messageModel.subscribeToMessagesByRoomId(roomId, callback);
+        const subscription = this.messageModel.subscribeToMessagesByRoomId(roomId, callback);
+        return subscription
     }
 
     //end methods

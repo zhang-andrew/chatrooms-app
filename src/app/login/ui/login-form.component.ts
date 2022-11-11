@@ -15,18 +15,21 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
     template: `
         <div class="wrapper">
             <ion-list lines="none">
-                <ion-item class="ion-no-padding">
-                    <ion-button class="provider-btn az-text-transform-none ion-padding" color="dark" (click)="loginAsGuest()" >
-                        <!-- <ion-icon slot="start" name="logo-google"></ion-icon> -->
-                        <!-- Log in as Guest -->
-                        Log in Anonymously
-                    </ion-button>
-                </ion-item>
+                
                 <ion-item  class="ion-no-padding">
                     <ion-button class="provider-btn az-text-transform-none ion-padding" (click)="loginWithGoogle()" >
                         <ion-icon slot="start" name="logo-google"></ion-icon>
                         Log in with Google
                     </ion-button>        
+                </ion-item>
+                <ion-item class="ion-no-padding">
+                    <ion-button class="provider-btn az-text-transform-none ion-padding" color="dark" (click)="loginAsGuest()" >
+                        <!-- <ion-icon slot="start" name="logo-google"></ion-icon> -->
+                        <!-- Log in as Guest -->
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        Log in Anonymously
+                        <!-- Anonymous Log in -->
+                    </ion-button>
                 </ion-item>
             </ion-list>
             

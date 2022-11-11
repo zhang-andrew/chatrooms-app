@@ -9,6 +9,8 @@ export class SingletonService {
 
     }
     constructor(){
+        console.log("SINGLETON-SERVICE");
+        
     }
 }
 

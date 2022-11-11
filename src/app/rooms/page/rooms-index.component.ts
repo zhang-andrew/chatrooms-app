@@ -72,25 +72,20 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class RoomsIndexComponent implements OnInit {
     rooms = [];
     isFirstLoad = true;
+    roomsSubscription = {
+        unsubscribe: null
+    };
     // showModalCreateDisplayName = false;
     // displayNameForm: FormGroup;
     constructor(private readonly roomsService: RoomsService,){ 
     }
 
-    ngOnInit(): void {
-    }
-
-    ngOnChanges(): void {
-    }
-
-    ngOnDestroy(): void {   
-    }
-
-    ngAfterViewInit(): void {   
+    async ngOnInit() {
         //Deals with room changes for the rooms list.
         //save to unsubscribe variable so when this component is not rendered, unmount the subscription snapshot
         //first query snapshot returns all existing documents.
-        const unsubscribe = this.roomsService.subscribeToRooms((changedRooms) => {
+        this.roomsSubscription.unsubscribe = await this.roomsService.subscribeToRooms((changedRooms) => {
+            console.log("@@@ subscription to rooms triggered.");
             
             if (this.isFirstLoad){
                 //...changedRooms returns all rooms on the first retrieval.
@@ -125,6 +120,18 @@ export class RoomsIndexComponent implements OnInit {
             };
 
         });
+    }
+
+    ngOnChanges(): void {
+    }
+
+    ngOnDestroy(): void {   
+        //destroy onSnapShot listener, when domTree no-longer has this component.
+        this.roomsSubscription.unsubscribe();
+    }
+
+    ngAfterViewInit(): void {   
+        
     }
 
     

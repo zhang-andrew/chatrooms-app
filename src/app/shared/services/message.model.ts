@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Firestore } from "@angular/fire/firestore";
-import { collection, query, deleteDoc, doc, getDoc, orderBy, setDoc, updateDoc, where, getDocs, addDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
+import { collection, query, deleteDoc, doc, getDoc, orderBy, setDoc, updateDoc, where, getDocs, addDoc, serverTimestamp, onSnapshot, limit, limitToLast } from "firebase/firestore";
 import { MessageData } from "../interfaces/message-data.interface";
 import { RoomData } from '../interfaces/room-data.interface';
 
@@ -108,13 +108,20 @@ export class MessageModel{
     async subscribeToMessagesByRoomId(roomId: RoomData['roomId'], callback: Function){
         //get reference to entire collection.
         const messagesCollRef = collection(this.db, "messages");
-        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt"));
+        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt"), limitToLast(10)); //needed to make a firestore index, with "createdAt: desc" to get this to work.
+        
 
         return onSnapshot(q, ( querySnapshot ) => {
+            
             //only get changed documents
             const changes = querySnapshot.docChanges();
             const docSnapshots = changes.map( change => change.doc);
-            const messages = docSnapshots.map( doc => doc.data());
+            const messages = docSnapshots.map( doc => {
+                const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+                console.log(source, " data: ", doc.data());
+                const d = doc.data()
+                return d
+            });
             
             //account for createdAt = serverTimestamp() which is set when the document reaches the server, it is null initially, 
             //this triggers the subscription listener for roomMessages, when the createdAt property changes on server-side(firebase side).

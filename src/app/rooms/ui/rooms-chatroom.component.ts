@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoomsService } from 'src/app/shared/services/rooms.service';
 import { MessageData } from 'src/app/shared/interfaces/message-data.interface';
@@ -8,6 +8,9 @@ import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/shared/services/auth.service';
 
 import { IonicModule } from '@ionic/angular';
+// import { Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { RoomData } from 'src/app/shared/interfaces/room-data.interface';
 
 @Component({
     selector: 'app-rooms-chatroom',
@@ -20,7 +23,7 @@ import { IonicModule } from '@ionic/angular';
                 <ion-list class="message-list">
                     <ion-item class="message ion-no-padding ion-no-margin" *ngFor="let message of messages">
                         <ion-text class="ion-text-wrap">
-                            <span>{{ message.displayName }}:</span>
+                            <span> {{ message.displayName }}:</span>
                             <!-- <span>
                                 <ion-textarea [readonly]="true">
                                     {{ message.text }}
@@ -139,42 +142,192 @@ export class RoomsChatroomComponent implements OnInit {
     messages = [];
     isFirstLoad: boolean = true;
     // contentElem;
+    subscription = {
+        unsubscribe: null
+    };
+    currUrl;
+    // inactivityTime;
+    
 
     constructor(private readonly roomsService: RoomsService, 
         private readonly auth: Auth, 
-        private readonly authService: AuthService){
+        private readonly authService: AuthService,
+        private readonly router: Router){
         // console.log(authService.loggedInUser);
         // console.log("IT WORKED");
         // this.isFirstLoad = true;
         // console.log(this.isFirstLoad);
+        this.currUrl = this.router.url;
+
+
+        // this.router.events.subscribe( async(event) => {
+        //     if (event.url == "/"){
+        //         console.log(event.url)
+        //     }
+            
+        //     if (event instanceof NavigationStart) {
+        //         console.log("   ## start of navigation");
+
+                
+        //     }
+        //     if (event instanceof NavigationEnd) {
+        //         console.log("   ## end of navigation");
+        //         // try {
+        //         //     this.subscription.unsubscribe();
+        //         // } catch (error) {
+        //         //     console.log(error);
+        //         //     console.log(this.subscription.unsubscribe);
+                    
+                    
+        //         // }
+        //     }
+        // })
+
+        // router.events.subscribe(
+        //     (event) => {
+        //         if ( event instanceof NavigationStart ) {
+        //             // Handle Navigation Start
+        //         }
+
+        //         if ( event instanceof NavigationEnd ) {
+        //             // Handle Navigation End
+        //         }
+        //     });
     }
 
     // ngOnInit(): void {
         
     // }
 
+    // @HostListener('window:onload')
+    // beforeOnloadHandler() {
+    //     console.log("WAS REFRESHED, RESTARTING ngOnInit()");
+        
+    //     this.ngOnInit();
+    //     return true
+    // }
+
+    // @HostListener('window:beforeunload', ['$event'])
+    // beforeUnloadHander() {
+    //     // or directly false
+    //     // this.allowRedirect;
+    //     // this.subscription
+    //     return false;
+    // }
+
+    inactivityTime(router) {
+        // Would be much better to have a flag var notIdle; 
+        // set that flag = true only on the events. 
+        // Then in the resetTimer function test if the notIdle flag is true, 
+        // if it is reset the timer their, or call logout. 
+        // This will remove the complexity overhead of constantly resetting the timer. 
+
+        var time;
+        var tmpURL;
+
+        router.events.subscribe( async(event) => {
+            if (event instanceof NavigationEnd){
+                tmpURL = event.url;
+                
+            }
+        })
+        
+        // window.onload = resetTimer;
+
+        // DOM Events
+        // document.onmousemove = resetTimer;
+        // document.onkeydown = resetTimer;
+        // window.onmousedown = resetTimer;  // catches touchscreen presses as well      
+        // window.ontouchstart = resetTimer; // catches touchscreen swipes as well      
+        // window.ontouchmove = resetTimer;  // required by some devices 
+        // window.onclick = resetTimer;      // catches touchpad clicks as well
+        
+        document.addEventListener('mousemove', resetTimer); // catches mouse move
+        document.addEventListener('keydown', resetTimer); // catches keyboard press
+        document.addEventListener('mousedown', resetTimer); // catches touchscreen presses as well  
+        document.addEventListener('touchstart', resetTimer); // catches touchscreen swipes as well      
+        document.addEventListener('touchmove', resetTimer); // required by some devices 
+        document.addEventListener('click', resetTimer); // catches touchpad clicks as well
+        window.addEventListener('scroll', resetTimer, true); // improved; see comments. Comment: just wanted to point out that window.onscroll will not fire if scrolling is inside a scrollable element, because scroll events don't bubble. Using window.addEventListener('scroll', resetTimer, true), 
+        
+    
+        // function logout() {
+        //     alert("You are now logged out.")
+        //     //location.href = 'logout.html'
+        // }
+    
+        function resetTimer() {
+            clearTimeout(time);
+            console.log("Timer cleared");
+            time = setTimeout( () => {
+                if (tmpURL.startsWith('/rooms/')){
+                    console.log("User unresponsive for 120 seconds. (2min)");
+                    //kick user, by navigating away. (this triggers the onNgDestroy())
+                    router.navigate(["/rooms"]);    
+                } else {
+                    console.log("Do nothing, and remove listeners that resetTimer");
+                    //remove the listeners
+                    document.removeEventListener('mousemove', resetTimer);
+                    document.removeEventListener('keydown', resetTimer); 
+                    document.removeEventListener('mousedown', resetTimer);
+                    document.removeEventListener('touchstart', resetTimer);
+                    document.removeEventListener('touchmove', resetTimer);
+                    document.removeEventListener('click', resetTimer); 
+                    window.removeEventListener('scroll', resetTimer, true);               
+                }
+            }, 120000)
+            // 1000 milliseconds = 1 second
+        }
+    };
+
+
     async ngOnInit(){
-
-        // this.roomsService.getMessagesByRoomId(this.roomId)
-        //     .then( dbMessages => {
-        //         console.log(dbMessages);
-        //         this.messages = [...this.messages, ...dbMessages];
-                
-                
-        //     })
+        console.log("Chatrooms ngOnInit");
+        
+        // this.resetTimer();
+        this.inactivityTime(this.router);
         
 
-        // const messageContainer = document.getElementById('message-container');
-        // console.log(messageContainer);
+        //start inactivity counter
+        // document.addEventListener('mousemove', this.resetTimer, true);
+        // document.onmousemove = this.resetTimer;
+        // document.onkeydown = this.resetTimer;
         
-        //Input properties isn't initialized until view is set up so generally you can access input value on ngOnInit()
-        // console.log("room messages: "+this.roomId);
-        // console.log(this.roomsService.getMessagesByRoomId(this.roomId));
-        // this.contentElem = document.querySelector(".content");
 
-        const unsubscribe = await this.roomsService.subscribeToRoomMessages(this.roomId, (newMessages) => {
-            console.log(this.isFirstLoad);
+        // //router navigation subscription
+        // this.router.events.subscribe( async(event) => {
+        //     if (event instanceof NavigationStart){
+        //         // if (event.url.startsWith('/rooms/')){
+        //             const browserRefresh = !this.router.navigated;
+        //             console.log("REFRESHREFRESH +"+browserRefresh);
+                    
+        //             if (browserRefresh){
+        //                 console.log("Refresh happened in a chatroom, rerouting to '/rooms'" + browserRefresh);
+        //                 this.router.navigate(["/rooms"])
+        //                 // return;
+        //             }
+        //         // }
+        //     }
+        // })
+        
+        //start subscription to RoomMessages
+        this.subscription.unsubscribe = await this.roomsService.subscribeToRoomMessages(this.roomId, (newMessages) => {
+            console.log("@@@ SUBSCRIPTION to ROOM MESSAGES TRIGGERED. @: "+this.roomId);
+            
+
+
             this.messages = [...this.messages, ...newMessages];
+
+            //if first load
+            // console.log(this.isFirstLoad);
+            // if (this.isFirstLoad){
+            //     this.messages = [...this.messages, {
+            //         "displayName": "",
+            //         "text": "Someone has entered the chat." 
+            //     }]
+            //     this.isFirstLoad = false;
+            // }
+            
             
             // return newMessages
 
@@ -221,26 +374,57 @@ export class RoomsChatroomComponent implements OnInit {
                 // } 
             // }, 10)
             console.count();
-            
-            
         })
+        // console.log("#######################");
+        // console.log(this.subscription.unsubscribe);
+        
+        // // Stop listening to changes
+        // unsubscribe();
+
+        // ngOnDestroy only fires when the component is destroyed inside the angular workflow. 
+        // However, refreshing the page is outside of the workflow and so this method does not fire. 
+        // To handle an action when the user leaves/refreshes the page you need to use onbeforeunload.
+        // window.onbeforeunload = () => this.ngOnDestroy();
+        
     }
 
+
+
     ngAfterViewInit(){
-        // let messageElems = document.querySelector('.message-list').children; //.scrollIntoView({behavior: "smooth"});
-        // if (this.isFirstLoad){
-        //     // messageElems[messageElems.length - 2].scrollIntoView({behavior: 'auto'});
-        //     // document.querySelector('.message-list')
-        //     // this.contentElem.scrollTo({
-        //     //     top: this.getElementBottom(messageElems[messageElems.length - 2]),
-        //     //     behavior: "auto",
-        //     // })
-        //     messageElems[messageElems.length - 2].scrollIntoView({
-        //         behavior: "smooth",
-        //         block: "start"
-        //     })
-        //     this.isFirstLoad = false;
-        // }
+    }
+
+    ngOnDestroy(){
+        //destroy onSnapShot listener, when domTree no-longer has this component.
+        this.subscription.unsubscribe()
+        console.log("&&& Subscription Destroyed. on " + this.currUrl);
+
+        //update members list, remove this user from this room's member list, reverse of the joinRoom func
+        this.roomsService.getRoom(this.roomId)
+            .then(roomData => {
+                console.log("currentUser is: "+this.authService.currentUser.displayName);
+                
+                const existingMembers = roomData['members'];
+                // The filter() method creates a new array filled with elements that pass a test provided by a function.
+                const updatedMembers = existingMembers.filter( (member) => {
+                    return member != this.authService.currentUser.displayName
+                })
+
+                const updatedRoomData: RoomData = {
+                    roomId: this.roomId,
+                    roomPassword: roomData['roomPassword'],
+                    members: updatedMembers,
+                }
+                //update members list
+                this.roomsService.updateRoom(updatedRoomData);
+                console.log(`removed user: '${this.authService.currentUser.displayName}' from roomData list`);
+            })
+        
+
+        // // if (![...roomData['members']].includes(displayName)){
+        
+        // // }
+        // console.log("Remove +" + );
+        
     }
 
     // ngAfterViewInit() {   
@@ -268,8 +452,17 @@ export class RoomsChatroomComponent implements OnInit {
 
     // }
 
+
+    //send system message
+    // async sendSystemMessage(){
+
+    // }
+
+    //send user message
     async sendChat(event){
-        if (event.target.value == ""){
+        event.preventDefault();
+        //if message empty, ignore (Bug: does not count shift+enters as null, so it still gets sent.)
+        if (event.target.value == null){
             return
         }
         console.log("sent message: "+ event.target.value);
@@ -284,11 +477,15 @@ export class RoomsChatroomComponent implements OnInit {
             text: event.target.value,
             roomId: this.roomId
         }
+
+        //reset input, immediately
+        event.target.value = "";
+        // .value.trimStart() : '
+
+        //then send to database
         // this.roomsService.createNewMessage(this.roomId, message);
         await this.roomsService.createMessage(message);
 
-        //reset input
-        event.target.value = "";
     }
 
 
