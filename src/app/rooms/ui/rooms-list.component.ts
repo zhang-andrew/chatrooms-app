@@ -115,8 +115,8 @@ import { IonicModule } from '@ionic/angular';
             --background: transparent;
             --background-activated: white;
             --background-activated-opacity: 0.7;
-            --background-hover: blue;
-            --color-activated: blue;
+            --background-hover: rgb(226, 229, 254);
+            --color-activated: lightblue;
             --color: black;
 
             height: 10rem;

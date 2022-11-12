@@ -11,7 +11,7 @@ import { SingletonService } from './shared/services/singleton.service';
 
 @Component({
     selector: 'app-root',
-    
+
     // templateUrl: './app.component.html',
     // styleUrls: ['./app.component.scss'],
     template: `
@@ -183,7 +183,8 @@ import { SingletonService } from './shared/services/singleton.service';
             --background: transparent;
             --background-activated: white;
             --background-activated-opacity: 0.7;
-            --color-activated: blue;
+            --background-hover: rgb(226, 229, 254);
+            --color-activated: none;
             --color: black;
             ion-icon{
                 padding-right: 0.3rem;
@@ -290,13 +291,13 @@ export class AppComponent {
 
     constructor(public authService: AuthService, private router: Router, private usersService: UsersService,
         private readonly formBuilder: FormBuilder,
-        public singletonService: SingletonService){    
+        public singletonService: SingletonService) {
         // console.log(this.showSpinner);
-            
+
     }
 
-    get displayNameInput(){
-        return this.displayNameForm.get('display-name');   
+    get displayNameInput() {
+        return this.displayNameForm.get('display-name');
     }
 
 
@@ -310,7 +311,7 @@ export class AppComponent {
         })
 
         //router navigation subscription
-        this.router.events.subscribe( async(event) => {
+        this.router.events.subscribe(async (event) => {
             // if (event instanceof NavigationStart){
             //     if (event.url.startsWith('/rooms/')){// && this.previousUrl == this.currentUrl){
             //         const browserRefresh = !this.router.navigated;
@@ -322,8 +323,25 @@ export class AppComponent {
             //         }
             //     }
             // }
+            if (event instanceof NavigationStart){
+                console.log(event.url);
+                if (event.url == "/rooms"){
+                    //not in a room
+                    // this.singletonService.props.isInRoom = false;
+                    // this.singletonService.props.enteredRoom = false;
+                }
+                if (event.url.startsWith("/rooms/")) {
+                    console.log("HOHOHO");
+                    
+                    //is in a room
+                    // this.singletonService.props.isInRoom = true;
+                    this.singletonService.props.enteredRoom = true;
+                    // console.log("props.isInRoom == " + this.singletonService.props.isInRoom);
+                    
+                } 
+            }
 
-            if (event instanceof NavigationEnd){
+            if (event instanceof NavigationEnd) {
                 this.previousUrl = this.currentUrl;
                 this.currentUrl = event.url;
                 console.log(event.url)
@@ -332,13 +350,13 @@ export class AppComponent {
                 //reset header
                 this.showHeader = true;
 
-                if (event.url == "/"){
+                if (event.url == "/") {
                     this.showModalCreateDisplayName = false;
-                    
+
                 } else if (event.url == "/login") {
                     //hide header for login page
                     this.showHeader = false;
-                } else if (event.url == "/rooms" || event.url.startsWith('/rooms')){
+                } else if (event.url == "/rooms" || event.url.startsWith('/rooms')) {
                     //disable all pages - //reset disabled status
                     this.disablePages();
 
@@ -350,9 +368,13 @@ export class AppComponent {
                     //     console.log(page.classList);
                     // })
 
+                    //setup displayName (this is a request every thing)
+                    // if (){
+
+                    // }
                     const dbUser = await this.usersService.getUser(this.authService.currentUser.uid);
 
-                    if (dbUser['displayName'] != null){
+                    if (dbUser['displayName'] != null) {
                         console.log("Found valid displayName");
                         //enable pages
                         this.enablePages();
@@ -362,48 +384,89 @@ export class AppComponent {
                         // })
                         this.authService.currentUser.displayName = dbUser['displayName'];
                     } else {
-                        console.log("DisplayName not valid: "+JSON.stringify(this.authService.currentUser));
+                        console.log("DisplayName not valid: " + JSON.stringify(this.authService.currentUser));
                         this.showModalCreateDisplayName = true;
                     }
 
-                    //////////////////////////// 
-                    //auto-focus on messeage bar
-                    //////////////////////////// 
-                    //get roomId
-                    const roomId = event.url.replace("/rooms/", "")
-                    
-                    //get all messageBars
-                    const messageBars = document.querySelectorAll(`.message-bar`);
-                    //loop through
-                    messageBars.forEach(messageBar => {
-                        //if classList has roomId
-                        const classes = messageBar.classList;
-                        if (classes.contains(roomId)){
-                            //this is the correctMessageBar corresponding to roomId
-                            const correctMessageBar = <HTMLInputElement>messageBar.querySelector(".native-textarea");
-                            //focus
-                            correctMessageBar.focus();
-                            return;
-                        }
-                    })
+
                     // const messageBar = (<HTMLInputElement>document.querySelector(`.message-bar[id="${roomId}"] .native-textarea`));
                     // console.log(messageBar);
                     // messageBar.focus();
-                        
-                } else if (event.url == "/users"){
+                    
+
+                    if (event.url.startsWith('/rooms/')) {
+                        console.log("YESYES");
+                        console.log(event.url);
+
+
+
+                        //////////////////////////// 
+                        //auto-focus on messeage bar
+                        //////////////////////////// 
+                        //get roomId
+                        const roomId = event.url.replace("/rooms/", "")
+                        console.log(roomId);
+
+
+                        //get all messageBars
+                        const messageBars = document.querySelectorAll(`.message-bar`);
+                        //loop through
+                        messageBars.forEach(messageBar => {
+                            //if classList has roomId
+                            const classes = messageBar.classList;
+                            if (classes.contains(roomId)) {
+                                console.log("YESYES2");
+                                console.log(messageBar);
+
+                                //this is the correctMessageBar corresponding to roomId
+                                const correctMessageBar = <HTMLInputElement>messageBar.querySelector(".native-textarea");
+                                console.log(correctMessageBar);
+
+                                //focus
+                                correctMessageBar.focus();
+                                return;
+                            }
+                        })
+
+                        //////////////////////////////////////
+                        // Auto scroll down to bottom of list
+                        //////////////////////////////////////
+                        //get all messageLists
+                        const messageLists = document.querySelectorAll(`.message-list`);
+                        console.log("YESYES3");
+                        messageLists.forEach(list => {
+                            const classes = list.classList;
+                            console.log("YESYES3");
+                            if (classes.contains(roomId)) {
+                                // const correctList = <HTMLElement>list.querySelector()
+                                const messages = list.children;
+
+                                console.log("YESYES4");
+                                console.log(messages[messages.length - 1]);
+
+                                window.setTimeout(() => {
+                                    messages[messages.length - 1].scrollIntoView({ behavior: 'auto' });
+                                    console.log("scrolled to bottom");
+
+                                }, 100)
+                            }
+                        })
+                    }
+
+                } else if (event.url == "/users") {
                     console.log("PROFILE /users");
                 }
 
 
                 //if rooms.id
-                    //scroll down to bottom of messageList
+                //scroll down to bottom of messageList
 
-            //    this.routerChangeMethod(event.url);
+                //    this.routerChangeMethod(event.url);
             }
-         })
+        })
     }
-    
-    attemptLogout(){
+
+    attemptLogout() {
         //start spinner
         // this.singletonService.props.showSpinner = true;
         this.disablePages();
@@ -412,7 +475,7 @@ export class AppComponent {
         this.sideMenu.close();
 
         //unsubscribe to onsnapshot listeners
-        
+
 
         //logout
         this.authService.logout()
@@ -421,15 +484,15 @@ export class AppComponent {
 
                 this.enablePages();
             })
-            .catch((e) => { 
+            .catch((e) => {
                 console.error(e.message);
             })
     }
-    navigateTo(path){
+    navigateTo(path) {
         //show spinner
 
         //navigate
-        this.router.navigate([path]).then(()=>{
+        this.router.navigate([path]).then(() => {
             console.log("LOADED!");
             // this.showSpinner = false;
         })
@@ -438,7 +501,7 @@ export class AppComponent {
         this.sideMenu.close();
         try {
             document.querySelector(".wrapper").classList.remove("disabled");
-            document.querySelector(".spinner").classList.remove("active");            
+            document.querySelector(".spinner").classList.remove("active");
         } catch (error) {
         }
     }
@@ -446,9 +509,9 @@ export class AppComponent {
 
 
 
-    async createDisplayNameOnSubmit(){
+    async createDisplayNameOnSubmit() {
         const formValues = this.displayNameForm.value; //returns an object containing form values
-        if (formValues.displayName == ""){
+        if (formValues.displayName == "") {
             console.log('error... inputValue is: ""');
             return
         }
@@ -456,37 +519,37 @@ export class AppComponent {
             "uid": this.authService.currentUser.uid,
             "displayName": formValues.displayName
         }
-    
+
         //update server dbUser
         await this.usersService.updateUser(changedFields);
         console.log("created a display name");
         //update local authUser
         this.authService.currentUser.displayName = formValues.displayName;
-        
+
         this.singletonService.props.showSpinner = false;
         this.showModalCreateDisplayName = false;
-        document.querySelectorAll('.page').forEach((page)=>{
+        document.querySelectorAll('.page').forEach((page) => {
             page.classList.remove('disabled');
         })
     }
 
 
     styleObject(): Object {
-        if (this.authService.isLoggedIn){
-            return {display: "none"}
-        } else if (this.authService.isLoggedIn == false){
-            return {display: "block"}
+        if (this.authService.isLoggedIn) {
+            return { display: "none" }
+        } else if (this.authService.isLoggedIn == false) {
+            return { display: "block" }
         } else {
-            return {visibility: "hidden", display: "block"}
+            return { visibility: "hidden", display: "block" }
         }
-        
+
         // if (/** YOUR CONDITION TO SHOW THE STYLES*/  ){
         //     return {height: this.height,width: this.width}
         // }
         return {}
     }
 
-    private disablePages(){
+    private disablePages() {
         //enable spinner
         this.singletonService.props.showSpinner = true;
 
@@ -496,9 +559,9 @@ export class AppComponent {
             page.classList.add("disabled");
             // console.log(page.classList);
         })
-        
+
     }
-    private enablePages(){
+    private enablePages() {
         //enable all pages
         const pageElements = document.querySelectorAll('.page');
         pageElements.forEach((page) => {

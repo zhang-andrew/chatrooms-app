@@ -108,19 +108,21 @@ export class MessageModel{
     async subscribeToMessagesByRoomId(roomId: RoomData['roomId'], callback: Function){
         //get reference to entire collection.
         const messagesCollRef = collection(this.db, "messages");
-        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt")); //needed to make a firestore index, with "createdAt: desc" to get this to work.
+        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt", "desc"), limit(10)); 
         
         return onSnapshot(q, ( querySnapshot ) => {
             //only get changed documents
             const changes = querySnapshot.docChanges();
             const docSnapshots = changes.map( change => change.doc);
-            const messages = docSnapshots.map( doc => {
+            let messages = docSnapshots.map( doc => {
                 // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
                 // console.log(source, " data: ", doc.data());
                 // const de = doc.data()
                 // return de
                 return doc.data();
             });
+            //reverse messages, since the orderBy was desc
+            messages.reverse();
             
             //account for createdAt = serverTimestamp() which is set when the document reaches the server, it is null initially, 
             //this triggers the subscription listener for roomMessages, when the createdAt property changes on server-side(firebase side).

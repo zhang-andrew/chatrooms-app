@@ -11,6 +11,7 @@ import { IonicModule } from '@ionic/angular';
 // import { Router } from '@angular/router';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { RoomData } from 'src/app/shared/interfaces/room-data.interface';
+import { SingletonService } from 'src/app/shared/services/singleton.service';
 
 @Component({
     selector: 'app-rooms-chatroom',
@@ -20,7 +21,7 @@ import { RoomData } from 'src/app/shared/interfaces/room-data.interface';
         <div class="wrapper">
         
             <ion-content class="content ion-padding"> <!-- [fullscreen]="true"  -->
-                <ion-list class="message-list">
+                <ion-list class="message-list {{this.roomId}}">
                     <ion-item class="message ion-no-padding ion-no-margin" *ngFor="let message of messages">
                         <ion-text class="ion-text-wrap">
                             <span> {{ message.displayName }}:</span>
@@ -152,7 +153,8 @@ export class RoomsChatroomComponent implements OnInit {
     constructor(private readonly roomsService: RoomsService, 
         private readonly auth: Auth, 
         private readonly authService: AuthService,
-        private readonly router: Router){
+        private readonly router: Router,
+        private readonly singletonService: SingletonService){
         // console.log(authService.loggedInUser);
         // console.log("IT WORKED");
         // this.isFirstLoad = true;
@@ -203,7 +205,10 @@ export class RoomsChatroomComponent implements OnInit {
     // beforeOnloadHandler() {
     //     console.log("WAS REFRESHED, RESTARTING ngOnInit()");
         
-    //     this.ngOnInit();
+    //     // this.ngOnInit();
+    //     this.ngOnDestroy();
+    //     console.log("MANUALLY DELETED");
+        
     //     return true
     // }
 
@@ -212,7 +217,37 @@ export class RoomsChatroomComponent implements OnInit {
     //     // or directly false
     //     // this.allowRedirect;
     //     // this.subscription
-    //     return false;
+    //     // return false;
+    //     this.ngOnDestroy;
+    //     // this.router.navigate(['/rooms']);
+    //     console.log("MANUALLY DELETED");
+
+    //     // //destroy onSnapShot listener, when domTree no-longer has this component.
+    //     // this.subscription.unsubscribe()
+    //     // console.log("&&& Subscription Destroyed. on " + this.currUrl);
+
+    //     // //update members list, remove this user from this room's member list, reverse of the joinRoom func
+    //     // this.roomsService.getRoom(this.roomId)
+    //     //     .then(roomData => {
+    //     //         console.log("currentUser is: "+this.authService.currentUser.displayName);
+                
+    //     //         const existingMembers = roomData['members'];
+    //     //         // The filter() method creates a new array filled with elements that pass a test provided by a function.
+    //     //         const updatedMembers = existingMembers.filter( (member) => {
+    //     //             return member != this.authService.currentUser.displayName
+    //     //         })
+
+    //     //         const updatedRoomData: RoomData = {
+    //     //             roomId: this.roomId,
+    //     //             roomPassword: roomData['roomPassword'],
+    //     //             members: updatedMembers,
+    //     //         }
+    //     //         //update members list
+    //     //         this.roomsService.updateRoom(updatedRoomData);
+    //     //         console.log(`removed user: '${this.authService.currentUser.displayName}' from roomData list`);
+    //     //     })
+
+    //     // return true;
     // }
 
     inactivityTime(router) {
@@ -282,11 +317,22 @@ export class RoomsChatroomComponent implements OnInit {
 
 
     async ngOnInit(){
+        // this.ngOnDestroy()
         console.log("Chatrooms ngOnInit");
         
         // this.resetTimer();
         this.inactivityTime(this.router);
         
+        //if first load
+        // console.log(this.isFirstLoad);
+        // console.log(this.singletonService.props.isInRoom);
+        // if (this.singletonService.props.isInRoom){
+        //     this.messages = [...this.messages, {
+        //         "displayName": "[System]",
+        //         "text": "You have entered the chat." 
+        //     }]
+        //     // this.isFirstLoad = false;
+        // }
 
         //start inactivity counter
         // document.addEventListener('mousemove', this.resetTimer, true);
@@ -314,35 +360,83 @@ export class RoomsChatroomComponent implements OnInit {
         this.subscription.unsubscribe = await this.roomsService.subscribeToRoomMessages(this.roomId, (newMessages) => {
             console.log("@@@ SUBSCRIPTION to ROOM MESSAGES TRIGGERED. @: "+this.roomId);
             
+            // //send enter message
+            // if (this.singletonService.props.enteredRoom){
+            //     // this.singletonService.props.enteredRoom = false;
+            //     this.messages = [...this.messages, {
+            //         "displayName": "[System]",
+            //         "text": "Due to database constraints, only the ten most recent messages were retrieved.", 
+            //     }]
+            // }
 
-
+            //set messages first
             this.messages = [...this.messages, ...newMessages];
 
-            //if first load
-            // console.log(this.isFirstLoad);
-            // if (this.isFirstLoad){
-            //     this.messages = [...this.messages, {
-            //         "displayName": "",
-            //         "text": "Someone has entered the chat." 
-            //     }]
-            //     this.isFirstLoad = false;
-            // }
-            
-            
-            // return newMessages
-
-            //I guess we have to wait for the ng* for loop to generate a new message. then:
-            //scroll to bottom of messageContainer to latest message element
-            // setTimeout(()=>{
-            let messageElems = document.querySelector('.message-list').children; //.scrollIntoView({behavior: "smooth"});
-            console.log(messageElems.length);
-
-            if (messageElems.length >= 2){
-                messageElems[messageElems.length - 2].scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                })
+            //send sytem enter message
+            if (this.singletonService.props.enteredRoom){
+                this.singletonService.props.enteredRoom = false;
+                
+                console.log([...newMessages].length);
+                if ([...newMessages].length < 10){
+                    this.messages = [...this.messages, 
+                        // {
+                        // "displayName": "[System]",
+                        // "text": "Less than 10.", 
+                        // }, 
+                        {
+                            "displayName": "[System]",
+                            "text": "You have entered the chat.", 
+                        }
+                    ]
+                    
+                } else {
+                    this.messages = [...this.messages, {
+                        "displayName": "[System]",
+                        "text": "Due to database constraints, only the ten most recent messages were retrieved.", 
+                    }, {
+                        "displayName": "[System]",
+                        "text": "You have entered the chat.", 
+                    }]  
+                }
+                
             }
+
+            
+            
+            //////////////////////////////////////
+            // AFter message, Auto scroll down to bottom of list 
+            //////////////////////////////////////
+            // let messageElems = document.querySelector('.message-list').children; //.scrollIntoView({behavior: "smooth"});
+            // console.log(messageElems.length);
+
+            // if (messageElems.length >= 2){
+            //     messageElems[messageElems.length - 2].scrollIntoView({
+            //         behavior: "smooth",
+            //         block: "start"
+            //     })
+            // }
+
+            //get all messageLists
+            const messageLists = document.querySelectorAll(`.message-list`);
+            console.log("YESYES3");
+            messageLists.forEach(list => {
+                const classes = list.classList;
+                console.log("YESYES3");
+                if (classes.contains(this.roomId)) {
+                    // const correctList = <HTMLElement>list.querySelector()
+                    const messages = list.children;
+                    console.log(messages.length);
+                    console.log("YESYES4");
+                    console.log(messages.length);
+
+                    window.setTimeout(() => {
+                        //Scroll to bottom
+                        console.log(messages.length);
+                        messages[messages.length - 1].scrollIntoView({ behavior: 'smooth' });
+                        console.log("scrolled to bottom");
+                    }, 100)
+                }
+            })
 
                 // if (messageElems.length >= 2){
                 //     if (this.isFirstLoad){

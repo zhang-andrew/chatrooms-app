@@ -6,6 +6,8 @@ import { Injectable } from '@angular/core';
 export class SingletonService {
     props = {
         showSpinner: false,
+        // isInRoom: false,
+        enteredRoom: false,
 
     }
     constructor(){

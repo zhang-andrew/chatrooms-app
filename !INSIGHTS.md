@@ -4,6 +4,19 @@
 - System messages in the chatroom, notifying when users join, leave a chatroom.
 - ??If spinner has been detected for more thatn 10 seconds, display error? there might be a better implementation of this.
 - detect 2 minute inactivity, disable listener. Kick User/Disable chat, users will have to refresh chat with button.
+- RoomsManager to handle system messages
+- detect if user is online or not
+
+# Hindsight: It'd have been better to store the retrieved data from DB into a singleton
+this would have let many different pages have access to said data. 
+Would have made it easier to send system messages to a chatroom message list.
+e.g. storing example:
+
+props: {
+    roomID: {
+        messages: []
+    }
+}
 
 
 # Hindsight: Implementing detection of inactivity and disabling the onSnapShot subscription listeners
