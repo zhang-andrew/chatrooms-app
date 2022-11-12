@@ -110,9 +110,7 @@ export class MessageModel{
         const messagesCollRef = collection(this.db, "messages");
         const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt")); //needed to make a firestore index, with "createdAt: desc" to get this to work.
         
-
         return onSnapshot(q, ( querySnapshot ) => {
-            
             //only get changed documents
             const changes = querySnapshot.docChanges();
             const docSnapshots = changes.map( change => change.doc);
