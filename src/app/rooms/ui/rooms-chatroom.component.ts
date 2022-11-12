@@ -82,13 +82,25 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
         }
         ion-content{
             overflow: hidden;
+            & > .inner-scroll{
+                background-color: red;
+            }
+        }
+        ion-content::part(scroll){
+            /* background-color: red;
+            --background: red; */
+            display: flex;
+            align-items: end;
         }
         ion-list.message-list{
             overflow-y: scroll;
             overflow-x: hidden;
 
+            /* display: flex;
+            flex-direction: column-reverse; */
             /* padding: 0;
             padding-bottom: 0.2rem; */
+            /* vertical-align: bottom; */
             
             background-color: var(--bg-color);
         }
@@ -371,6 +383,8 @@ export class RoomsChatroomComponent implements OnInit {
 
             //set messages first
             this.messages = [...this.messages, ...newMessages];
+            console.log(...newMessages);
+            
 
             //send sytem enter message
             if (this.singletonService.props.enteredRoom){
@@ -390,13 +404,16 @@ export class RoomsChatroomComponent implements OnInit {
                     ]
                     
                 } else {
-                    this.messages = [...this.messages, {
-                        "displayName": "[System]",
-                        "text": "Due to database constraints, only the ten most recent messages were retrieved.", 
-                    }, {
-                        "displayName": "[System]",
-                        "text": "You have entered the chat.", 
-                    }]  
+                    this.messages = [...this.messages, 
+                        // {
+                        //     "displayName": "[System]",
+                        //     "text": "Due to database constraints, only the ten most recent messages were retrieved.", 
+                        // }, 
+                        {
+                            "displayName": "[System]",
+                            "text": "You have entered the chat.", 
+                        }
+                    ]  
                 }
                 
             }

@@ -108,22 +108,22 @@ export class MessageModel{
     async subscribeToMessagesByRoomId(roomId: RoomData['roomId'], callback: Function){
         //get reference to entire collection.
         const messagesCollRef = collection(this.db, "messages");
-        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt", "desc"), limit(10)); 
+        // const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt", "desc"), limit(10)); 
+        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt", "desc")); 
         
         return onSnapshot(q, ( querySnapshot ) => {
             //only get changed documents
             const changes = querySnapshot.docChanges();
             const docSnapshots = changes.map( change => change.doc);
             let messages = docSnapshots.map( doc => {
-                // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-                // console.log(source, " data: ", doc.data());
+                const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+                console.log(source, " data: ", doc.data());
                 // const de = doc.data()
                 // return de
                 return doc.data();
             });
-            //reverse messages, since the orderBy was desc
-            messages.reverse();
-            
+
+
             //account for createdAt = serverTimestamp() which is set when the document reaches the server, it is null initially, 
             //this triggers the subscription listener for roomMessages, when the createdAt property changes on server-side(firebase side).
             for (let i=0; i<messages.length; i++){
@@ -134,7 +134,14 @@ export class MessageModel{
                 }
             }
 
+            //reverse messages, since the orderBy was desc
+            messages.reverse();
+            
+           
+
             if (callback){
+                console.log("messages: "+JSON.stringify(messages));
+                
                 callback(messages);
             }
         })

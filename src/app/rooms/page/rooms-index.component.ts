@@ -86,6 +86,7 @@ export class RoomsIndexComponent implements OnInit {
         //first query snapshot returns all existing documents.
         this.roomsSubscription.unsubscribe = await this.roomsService.subscribeToRooms((changedRooms) => {
             console.log("@@@ subscription to rooms triggered.");
+            // this.disablePages();
             
             if (this.isFirstLoad){
                 //...changedRooms returns all rooms on the first retrieval.
