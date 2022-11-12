@@ -21,6 +21,9 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
         <div class="wrapper">
         
             <ion-content class="content ion-padding"> <!-- [fullscreen]="true"  -->
+                <div class="support">
+                    <p>some text</p>
+                </div>
                 <ion-list class="message-list {{this.roomId}}">
                     <ion-item class="message ion-no-padding ion-no-margin" *ngFor="let message of messages">
                         <ion-text class="ion-text-wrap">
@@ -82,20 +85,38 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
         }
         ion-content{
             overflow: hidden;
-            & > .inner-scroll{
-                background-color: red;
-            }
         }
         ion-content::part(scroll){
             /* background-color: red;
             --background: red; */
             display: flex;
-            align-items: end;
+            justify-content: flex-start; /* content starts at the beginner as usual */
+            flex-direction: column-reverse; /* But reverse it */
+            
+            /* align-items: end;
+            flex: 1 1 auto; */
+            /* margin-top: auto; */
+            /* float: bott */
+            /* position: absolute; */
+            /* bottom: 0 !important; */
+            /* vertical-align: bottom; */
         }
+        .support{
+            margin: auto;
+            position: absolute;
+            text-align: center;
+            bottom: 20px;
+            width: 100%;
+        }
+
         ion-list.message-list{
             overflow-y: scroll;
             overflow-x: hidden;
 
+/* 
+            flex: 1 1 auto;
+            overflow-y: auto; */
+            /* height: 0px; */
             /* display: flex;
             flex-direction: column-reverse; */
             /* padding: 0;
