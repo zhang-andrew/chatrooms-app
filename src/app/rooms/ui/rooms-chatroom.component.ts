@@ -41,7 +41,7 @@ import { RoomData } from 'src/app/shared/interfaces/room-data.interface';
             
             <ion-footer [translucent]="true">
                 <ion-toolbar class="ion-text-wrap">
-                    <ion-textarea class="message-bar" enterkeyhint="send" spellcheck="false" autoGrow="false" inputmode="text" type="text" (keydown.enter)="sendChat($event)" placeholder="Enter text"></ion-textarea>
+                    <ion-textarea class="message-bar" autofocus="true" enterkeyhint="send" spellcheck="false" autoGrow="false" inputmode="text" type="text" (keydown.enter)="sendChat($event)" placeholder="Enter text"></ion-textarea>
                     <!-- <ion-input class="message-bar " type="text" (keydown.enter)="sendChat($event)"  placeholder="Enter text"></ion-input> -->
                 </ion-toolbar>
             </ion-footer>
@@ -399,32 +399,25 @@ export class RoomsChatroomComponent implements OnInit {
         console.log("&&& Subscription Destroyed. on " + this.currUrl);
 
         //update members list, remove this user from this room's member list, reverse of the joinRoom func
-        this.roomsService.getRoom(this.roomId)
-            .then(roomData => {
-                console.log("currentUser is: "+this.authService.currentUser.displayName);
+        // this.roomsService.getRoom(this.roomId)
+        //     .then(roomData => {
+        //         console.log("currentUser is: "+this.authService.currentUser.displayName);
                 
-                const existingMembers = roomData['members'];
-                // The filter() method creates a new array filled with elements that pass a test provided by a function.
-                const updatedMembers = existingMembers.filter( (member) => {
-                    return member != this.authService.currentUser.displayName
-                })
+        //         const existingMembers = roomData['members'];
+        //         // The filter() method creates a new array filled with elements that pass a test provided by a function.
+        //         const updatedMembers = existingMembers.filter( (member) => {
+        //             return member != this.authService.currentUser.displayName
+        //         })
 
-                const updatedRoomData: RoomData = {
-                    roomId: this.roomId,
-                    roomPassword: roomData['roomPassword'],
-                    members: updatedMembers,
-                }
-                //update members list
-                this.roomsService.updateRoom(updatedRoomData);
-                console.log(`removed user: '${this.authService.currentUser.displayName}' from roomData list`);
-            })
-        
-
-        // // if (![...roomData['members']].includes(displayName)){
-        
-        // // }
-        // console.log("Remove +" + );
-        
+        //         const updatedRoomData: RoomData = {
+        //             roomId: this.roomId,
+        //             roomPassword: roomData['roomPassword'],
+        //             members: updatedMembers,
+        //         }
+        //         //update members list
+        //         this.roomsService.updateRoom(updatedRoomData);
+        //         console.log(`removed user: '${this.authService.currentUser.displayName}' from roomData list`);
+        //     })
     }
 
     // ngAfterViewInit() {   

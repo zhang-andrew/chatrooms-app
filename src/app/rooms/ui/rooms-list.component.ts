@@ -16,47 +16,47 @@ import { IonicModule } from '@ionic/angular';
     standalone: true,
     imports: [CommonModule, RouterModule, IonicModule],
     template: `
-        <ion-list class="rooms-list" lines="none">
-            <ion-item *ngFor="let room of rooms" class="room">
-                <ion-button expand="block" fill="outline" style="width: 100%;height: 100%;" (click)="joinRoom(room.roomId)">
-                    <ion-grid>
-                        <ion-row class="ion-padding">
-                            <ion-col>
-                                <ion-text>Room#{{room.roomId}}</ion-text>
-                                <ion-list *ngIf="room.members" class="ion-no-padding">
-                                    Members:
-                                    <span *ngFor="let member of room.members" class="ion-no-padding"> 
-                                        <ion-text>
-                                            {{member}},
-                                            <!-- Members: {{ room.members }} -->
-                                        </ion-text>
-                                    </span>
-                                </ion-list>
-                            </ion-col>
-                            <ion-col size="auto" class="ion-no-padding">
-                                <ion-button class="ion-padding" color="light" (click)="deleteRoom(room.roomId)">
-                                    <ion-icon size="large" name="trash-outline"></ion-icon>
-                                    <!-- <ion-icon name="close-outline"></ion-icon> -->
-                                </ion-button>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
-
-                </ion-button>
-                
-                
-                <!-- <ion-list> -->
-                
-                <!-- </ion-list> -->
-                <!-- <article class="room"> -->
-                    <!-- <h3>
-                        <a (click)="joinRoom(room.roomId)">Room#{{room.roomId}}</a> -->
-                        
-                    <!-- </h3> -->
+        <div class="rooms-list" lines="none">
+            <ion-grid>
+                <ion-row class="ion-justify-content-start ion-align-items-start">
                     
-                <!-- </article> -->
-            </ion-item>
-        </ion-list>
+                    <ion-col size="6" size-md="4" *ngFor="let room of rooms" class="room-container">
+                        <ion-button expand="full" (click)="joinRoom(room.roomId)" class="room">
+
+                            <ion-text class="room__name">Room #{{room.roomId.slice(0, 4)}}</ion-text>
+
+                            <ion-button class="room__delete-btn" fill="clear" color="light" (click)="deleteRoom(room.roomId)">
+                                <!-- <ion-icon name="close-outline"></ion-icon> -->
+                                <ion-icon name="trash-outline" style="color:black;"></ion-icon>
+                            </ion-button>
+
+                            <ion-item class="room__members ion-no-padding" lines="none">
+                                <ion-text class="ion-text-wrap">
+                                    <ion-icon name="ellipse-outline" style="vertical-align: bottom;"></ion-icon>
+                                    Members:&#160; 
+                                    <span *ngFor="let member of room.members" > 
+                                        <span *ngIf="room.members.length > 2 && member != room.members[room.members.length - 1]">
+                                            {{member}},&#160;
+                                        </span>
+                                        <span *ngIf="member == room.members[room.members.length - 1]">
+                                            {{member}}
+                                        </span>
+                                    </span>
+                                </ion-text>
+                            </ion-item>
+
+                        </ion-button>
+                    </ion-col>
+
+                    <ion-col size="6" size-md="4" class="room-container">
+                        <ion-button expand="full" (click)="createNewRoom()" class="room">
+                            <ion-icon size="large" name="add-outline"></ion-icon>
+                        </ion-button>
+                    </ion-col>
+
+                </ion-row>
+            </ion-grid>
+        </div>
     `,
     styles: [`
         :host{
@@ -66,26 +66,145 @@ import { IonicModule } from '@ionic/angular';
                 /* padding-top: 20%; */
             }
         }
+        p > span{
+            display: inline-block;
+        }
+
+        ion-item{
+            --padding-top: 0px;
+            --padding-start: 0px;
+            --padding-end: 0px;
+            --padding-bottom: 0px;
+            --inner-padding-end: 0px;
+            --inner-padding-start: 0px;
+            --inner-padding-top: 0px;
+            --inner-padding-bottom: 0px;
+            background: none;
+            background-color: transparent;
+            --background: none;
+            --box-shadow: none;
+            --inner-box-shadow: none;
+            
+            > * {
+                --border-bottom: none;
+                border-bottom: none;    
+            }
+            box-shadow: none;
+        }
+
+        /* ion-col */
+        .room-container{
+            text-align: center;
+            padding: 0.3rem;
+        }
+        /* ion-button */
+        .room{ 
+            --padding-top: 0px;
+            --padding-start: 0px;
+            --padding-end: 0px;
+            --padding-bottom: 0px;
+            --inner-padding-end: 0px;
+            --inner-padding-start: 0px;
+            --inner-padding-top: 0px;
+            --inner-padding-bottom: 0px;
+
+            --box-shadow: none;
+            --background: transparent;
+            --background-activated: white;
+            --background-activated-opacity: 0.7;
+            --background-hover: blue;
+            --color-activated: blue;
+            --color: black;
+
+            height: 10rem;
+            width: 100%;
+            position: relative;
+            background-color: rgb(236, 239, 254);
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+                
+            &__name{
+                position: absolute;
+                top: 1rem;
+                left: 50%;
+                transform: translateX(-50%);
+                text-transform: uppercase;
+            }
+            
+            
+            &__delete-btn{
+                @media (orientation: "portrait"){
+                    visibility: visible;
+                }
+                visibility: hidden;
+                position: absolute;
+                bottom: 0;
+                right: 0;
+
+                /* --background-activated: white;
+                --background-activated-opacity: 0.7; */
+                /* --background: transparent;
+                --background-activated: white;
+                --background-activated-opacity: 0.7;
+                --background-hover: red;
+                --color-activated: blue;
+                --color: black;
+                color: black !important;
+                background-color: transparent;
+                color: black; */
+
+            }
+            &__members{
+                position: absolute;
+                top: 2rem;
+                left: 0.5rem;
+
+                font-size: 12px;
+                opacity: 0.65;
+
+                span{
+                    padding: 0;
+                    margin: 0;
+                }
+            }
+
+
+            &:hover{
+                > *{
+                    visibility: visible;
+                }    
+            }
+        }
+
+
+        .card-add-btn{
+            height: 10rem;
+            width: 100%;
+            background-color: rgb(236, 239, 254);
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+            margin: 0.3rem;
+        }
+
+
         /* ion-content, ion-list,  */
-        ion-list{
+        /* ion-list{
             height: 100%;
         }
         ion-item{
             background-color: transparent;
             --background-color: transparent;
             --background: transparent;
-            /* --box-shadow: none; */
+            --box-shadow: none;
         }
 
         .room{
             outline: 1px dashed black;
             outline-offset: -1px;
-            /* --background: red; */
+            
             margin-bottom: 0.5rem;
         }
         a {
             cursor: pointer;
-        }
+        } */
         /* .btn-del-room{
             --padding: 8px;
         } */
@@ -131,6 +250,20 @@ export class RoomsListComponent implements OnInit {
         event.preventDefault();
         let d = await this.roomsService.deleteRoom(roomId);
         return d
+    }
+    async addRoom(){
+        console.log("add room");
+        
+    }
+
+    async createNewRoom(){
+        const roomData: RoomData = {
+            // roomId: generateRandom(),
+            roomPassword: "",
+            // messages: [],
+            members: [],
+        }
+        await this.roomsService.createRoom(roomData);
     }
     //end methods
 }
