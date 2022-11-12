@@ -108,7 +108,7 @@ export class MessageModel{
     async subscribeToMessagesByRoomId(roomId: RoomData['roomId'], callback: Function){
         //get reference to entire collection.
         const messagesCollRef = collection(this.db, "messages");
-        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt"), limitToLast(10)); //needed to make a firestore index, with "createdAt: desc" to get this to work.
+        const q = query(messagesCollRef, where("roomId", "==", `${roomId}`), orderBy("createdAt")); //needed to make a firestore index, with "createdAt: desc" to get this to work.
         
 
         return onSnapshot(q, ( querySnapshot ) => {
@@ -117,10 +117,11 @@ export class MessageModel{
             const changes = querySnapshot.docChanges();
             const docSnapshots = changes.map( change => change.doc);
             const messages = docSnapshots.map( doc => {
-                const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
-                console.log(source, " data: ", doc.data());
-                const de = doc.data()
-                return de
+                // const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+                // console.log(source, " data: ", doc.data());
+                // const de = doc.data()
+                // return de
+                return doc.data();
             });
             
             //account for createdAt = serverTimestamp() which is set when the document reaches the server, it is null initially, 
