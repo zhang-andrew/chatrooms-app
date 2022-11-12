@@ -32,7 +32,7 @@ import { IonicModule } from '@ionic/angular';
 
                             <ion-item class="room__members ion-no-padding" lines="none">
                                 <ion-text class="ion-text-wrap">
-                                    <ion-icon name="ellipse-outline" style="vertical-align: bottom;"></ion-icon>
+                                    <ion-icon name="ellipse-outline" style="vertical-align: bottom; padding-left: 0.5rem"></ion-icon>
                                     Members:&#160; 
                                     <span *ngFor="let member of room.members" > 
                                         <span *ngIf="room.members.length > 2 && member != room.members[room.members.length - 1]">
