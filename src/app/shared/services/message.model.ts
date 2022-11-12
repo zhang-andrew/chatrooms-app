@@ -119,8 +119,8 @@ export class MessageModel{
             const messages = docSnapshots.map( doc => {
                 const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
                 console.log(source, " data: ", doc.data());
-                const d = doc.data()
-                return d
+                const de = doc.data()
+                return de
             });
             
             //account for createdAt = serverTimestamp() which is set when the document reaches the server, it is null initially, 

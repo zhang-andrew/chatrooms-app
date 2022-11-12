@@ -343,7 +343,6 @@ export class AppComponent {
                     this.disablePages();
 
 
-
                     //   });
                     // const pageElements = document.querySelectorAll('.page');
                     // pageElements.forEach((page) => {
@@ -366,6 +365,31 @@ export class AppComponent {
                         console.log("DisplayName not valid: "+JSON.stringify(this.authService.currentUser));
                         this.showModalCreateDisplayName = true;
                     }
+
+                    //////////////////////////// 
+                    //auto-focus on messeage bar
+                    //////////////////////////// 
+                    //get roomId
+                    const roomId = event.url.replace("/rooms/", "")
+                    
+                    //get all messageBars
+                    const messageBars = document.querySelectorAll(`.message-bar`);
+                    //loop through
+                    messageBars.forEach(messageBar => {
+                        //if classList has roomId
+                        const classes = messageBar.classList;
+                        if (classes.contains(roomId)){
+                            //this is the correctMessageBar corresponding to roomId
+                            const correctMessageBar = <HTMLInputElement>messageBar.querySelector(".native-textarea");
+                            //focus
+                            correctMessageBar.focus();
+                            return;
+                        }
+                    })
+                    // const messageBar = (<HTMLInputElement>document.querySelector(`.message-bar[id="${roomId}"] .native-textarea`));
+                    // console.log(messageBar);
+                    // messageBar.focus();
+                        
                 } else if (event.url == "/users"){
                     console.log("PROFILE /users");
                 }

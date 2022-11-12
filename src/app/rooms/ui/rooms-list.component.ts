@@ -25,10 +25,13 @@ import { IonicModule } from '@ionic/angular';
 
                             <ion-text class="room__name">Room #{{room.roomId.slice(0, 4)}}</ion-text>
 
-                            <ion-button class="room__delete-btn" fill="clear" color="light" (click)="deleteRoom(room.roomId)">
+                            <!-- <div class="room__delete-btn-container"> -->
+                            <ion-button class="room__delete-btn" fill="clear" color="light" (click)="deleteRoom($event, room.roomId)">
                                 <!-- <ion-icon name="close-outline"></ion-icon> -->
                                 <ion-icon name="trash-outline" style="color:black;"></ion-icon>
                             </ion-button>
+                            <!-- </div> -->
+                           
 
                             <ion-item class="room__members ion-no-padding" lines="none">
                                 <ion-text class="ion-text-wrap">
@@ -130,7 +133,8 @@ import { IonicModule } from '@ionic/angular';
                 text-transform: uppercase;
             }
             
-            
+            &__delete-btn-container{
+            }
             &__delete-btn{
                 @media (orientation: "portrait"){
                     visibility: visible;
@@ -139,6 +143,13 @@ import { IonicModule } from '@ionic/angular';
                 position: absolute;
                 bottom: 0;
                 right: 0;
+                
+                /* ion-icon{ */
+                    /* position: relative;
+                    z-index: 999 !important; */
+                    /* outline: 1px solid red; */
+                /* } */
+                
 
                 /* --background-activated: white;
                 --background-activated-opacity: 0.7; */
@@ -227,6 +238,7 @@ export class RoomsListComponent implements OnInit {
         event.preventDefault();
         //navigate to room
         this.router.navigate(['/rooms', roomId]);
+        
 
         //update rooms.members
         const userData = await this.usersService.getUser(this.auth.currentUser.uid);
@@ -246,10 +258,15 @@ export class RoomsListComponent implements OnInit {
         } 
     }
     
-    async deleteRoom(roomId){
-        event.preventDefault();
-        let d = await this.roomsService.deleteRoom(roomId);
-        return d
+    async deleteRoom(e, roomId){
+        e.preventDefault();
+        //stop event bubbling from triggering parent's joinRoom click event
+        e.stopPropagation();
+        // let d = 
+        await this.roomsService.deleteRoom(roomId);
+        // return d
+
+        
     }
     async addRoom(){
         console.log("add room");

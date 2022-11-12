@@ -21,8 +21,8 @@ html{
 body{
     height: auto;
     min-height: 100%;
-    outline: 5px dashed black;
-    outline-offset: -5px;
+    outline: 5px dashed black; //doesnt show up for some reason since using the ion-app / or was it the ion fullscreen elem prop, i forgot
+    outline-offset: -5px;   
 
     
 }
@@ -52,8 +52,8 @@ app-root{
         // }
         //push down to accomodate for topbarheight
         // padding-top: var(--top-bar-height);
-        outline: 2px dashed green;
-        outline-offset: -2px;
+        // outline: 2px dashed green;
+        // outline-offset: -2px;
     }
 }
 
