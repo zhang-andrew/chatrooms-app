@@ -113,7 +113,7 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
             overflow-y: scroll;
             overflow-x: hidden;
 
-/* 
+            /* 
             flex: 1 1 auto;
             overflow-y: auto; */
             /* height: 0px; */
@@ -149,6 +149,12 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
             }
         }
 
+        ion-footer{
+            /* position: fixed;
+            bottom: 0;
+            outline: 1px solid red;
+            outline-offset: -1px; */
+        }
         input.message-bar{
             width: 100%;
             height: 2rem;
@@ -159,6 +165,8 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
             /* border-radius: 5px */
             /* --inner-padding-left: 1rem; */
             /* box-shadow: inset 0px 1px 8px rgba(0, 0, 0, 0.2); */
+            /* outline: 1px solid red;
+            outline-offset: -1px; */
         }
     `]
 })
