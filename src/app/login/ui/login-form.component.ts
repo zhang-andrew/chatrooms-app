@@ -44,17 +44,18 @@ import { SingletonService } from 'src/app/shared/services/singleton.service';
                             <ion-item class="ion-no-padding">
                                 <ion-input type="email" placeholder="Email" formControlName="email" required></ion-input>
                             </ion-item>
-                            <div class="az-validation-errors" *ngIf="emailInput?.hasError('required')">
+                            <div class="az-validation-errors" *ngIf="emailInput?.hasError('required') && emailInput.touched">
+                            <!-- !title.valid && title.touched -->
                                 <ion-text color="danger">Email cannot be empty.</ion-text>
                             </div>
-                            <div class="az-validation-errors" *ngIf="emailInput?.hasError('email')">
+                            <div class="az-validation-errors" *ngIf="emailInput?.hasError('email') && emailInput.touched">
                                 <ion-text  color="danger">Email isn't valid. Please enter a valid email.</ion-text>
                             </div>
 
                             <ion-item class="ion-no-padding">
                                 <ion-input type="password" placeholder="Password" formControlName="password" required></ion-input>
                             </ion-item>
-                            <div *ngIf="passwordInput?.hasError('required')">
+                            <div *ngIf="passwordInput?.hasError('required') && passwordInput?.touched">
                                 <ion-text color="danger">Password cannot be empty.</ion-text>
                             </div>
                         </ion-list>
