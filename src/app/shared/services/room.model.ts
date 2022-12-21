@@ -68,6 +68,34 @@ export class RoomModel{
         return deletedRoom;
     }
 
+    async deleteRooms() {
+
+        const collRef = collection(this.db, `rooms`);
+        const querySnapshot = await getDocs(collRef); 
+        const docSnapshots = querySnapshot.docs;
+        if (docSnapshots.length > 0) {
+            const roomsRef = docSnapshots.map(doc => doc.ref);
+            roomsRef.forEach(async(doc) => {
+                // const docRef = doc(this.db, `rooms/${roomId}`);
+                // doc.ref
+                await deleteDoc(doc)
+                // doc.ref.delete();
+              });
+            // const deletedRoom = await deleteDoc(docRef); 
+            // return rooms;
+            console.log("successfully deleted all rooms");
+            return;
+            
+        } else {
+            console.log("Collection is empty.")
+            return null;
+        }
+
+        // const docRef = doc(this.db, `rooms/${roomId}`);
+        // const deletedRoom = await deleteDoc(docRef); 
+        // return deletedRoom;
+    }
+
     ///////////////////////////////////
     // LISTEN / SUBSCRIBE to changes //
     ///////////////////////////////////

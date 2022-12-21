@@ -77,6 +77,19 @@ export class RoomsService {
 
         return deletedRoom
     }
+    async deleteRooms(){
+        //Delete room db.rooms
+        // const deletedRooms = this.roomModel.deleteRoom(roomId);
+
+        // //Delete all messages matching roomId.
+        // this.messageModel.deleteMessagesByRoomId(roomId);
+
+        // const rooms = this.roomModel.getRooms();
+
+        this.roomModel.deleteRooms();
+
+        return 
+    }
 
     ////////////
     // LISTEN //

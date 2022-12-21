@@ -26,7 +26,7 @@ import { HeaderComponent } from '../../_OLD/header.component';
 
 import { SingletonService } from './shared/services/singleton.service';
 // import { AuthService } from './shared/services/auth.service';
-
+// import { HttpClient, HttpHeaders } from '@angular/common/http';
 // import { UserLoginComponent } from './_OLD/pages/components/user-login/user-login.component';
 // import { UserProfileComponent } from './_OLD/pages/components/user-profile/user-profile.component';
 // import { HomeComponent } from './_OLD/pages/home/home.component';
@@ -35,6 +35,8 @@ import { SingletonService } from './shared/services/singleton.service';
 // import { AdminComponent } from './_OLD/pages/admin/admin.component';
 // import { LoginFormComponent } from './_OLD/pages/components/user-login/login-form/login-form.component';
 // import { TestComponent } from './test/test.component';
+
+import { HttpClientModule } from '@angular/common/http';
 
 
 //What is the point of htis file - It is to startup your application, and set the links to your other modules.
@@ -51,7 +53,7 @@ import { SingletonService } from './shared/services/singleton.service';
         AppRoutingModule,
         IonicModule.forRoot(),
         ReactiveFormsModule,
-        // HttpClientModule,
+        HttpClientModule,
         //firebase
         provideFirebaseApp(() => {
             const app = initializeApp(environment.firebaseConfig);
@@ -75,7 +77,9 @@ import { SingletonService } from './shared/services/singleton.service';
         // AuthService,
         { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
         // AuthService
-        SingletonService
+        SingletonService,
+        // HttpClient, 
+        // HttpHa
     ],
     //?i dunno what bootstrap[] is?
     bootstrap: [AppComponent]
