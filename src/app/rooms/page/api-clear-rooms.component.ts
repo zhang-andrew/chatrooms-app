@@ -12,12 +12,14 @@ import { IonicModule } from '@ionic/angular';
 // import { HttpClientModule } from '@angular/common/http';
 // import { HttpClient } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
+// import { Component } from '@angular/core';
+// import { HttpClient } from '@angular/common/http';
 
 
 @Component({
-    selector: 'app-clear-rooms',
-    standalone: true,
-    imports: [CommonModule, IonicModule],
+    selector: 'app-api-clear-rooms',
+    // standalone: true,
+    // imports: [CommonModule, IonicModule],
     template: `
         <div class="page disabled">
             <br>
@@ -25,33 +27,36 @@ import { HttpClient } from '@angular/common/http';
             <!-- <app-rooms-chatroom [roomId]="roomId"></app-rooms-chatroom> -->
         </div>
     `,
-    styles: [`
-        :host{
-            & > :nth-child(1){
-                height: 100%;
-                width: 100%;
-                /* background-color: red; */
-                position: relative;
-                /* padding: 1rem; */
-                padding-top: 5rem;
-            }
-        }
-        .disabled {
-            pointer-events: none;
-            opacity: 0.4;
-        }
+    // styles: [`
+    //     :host{
+    //         & > :nth-child(1){
+    //             height: 100%;
+    //             width: 100%;
+    //             /* background-color: red; */
+    //             position: relative;
+    //             /* padding: 1rem; */
+    //             padding-top: 5rem;
+    //         }
+    //     }
+    //     .disabled {
+    //         pointer-events: none;
+    //         opacity: 0.4;
+    //     }
 
-    `]
+    // `]
 })
-export class ClearRoomsComponent implements OnInit {
+export class ApiClearRoomsComponent{
     // roomId = "";
 
-    constructor(private roomsService: RoomsService, private http: HttpClient) { 
-        console.log("hi this worked");
+    // constructor(private roomsService: RoomsService, private http: HttpClient) { 
+    //     console.log("hi this worked");
 
-        this.roomsService.deleteRooms();
-        // this.deleteRooms();
-    }
+    //     this.roomsService.deleteRooms();
+    //     // this.deleteRooms();
+    // }
+    constructor(private roomsService: RoomsService, private http: HttpClient) {
+        this.handleRequest();
+      }
 
     ngOnInit(): void {
         // First get the product id from the current route
@@ -72,6 +77,18 @@ export class ClearRoomsComponent implements OnInit {
         //   });
     }
 
+    handleRequest() {
+        // Perform some logic to generate the response data
+        const data = { message: 'Hello World' };
+    
+        // this.http.post('/api/endpoint', data).subscribe();
+        console.log("successfully sent request to chatrooms server.");
+
+        this.roomsService.deleteRooms();
+
+        // this.http.post('/api/clear-rooms', data).subscribe();
+        return;
+      }
 
     async deleteRooms(){
         // e.preventDefault();

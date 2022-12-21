@@ -8,7 +8,7 @@ import { LoginIndexComponent } from './login/page/login-index.component';
 // import { LoginIndexComponent } from './login/page/login-index.component';
 import { RoomsIdComponent } from './rooms/page/rooms-id.component';
 import { RoomsIndexComponent } from './rooms/page/rooms-index.component';
-import { ClearRoomsComponent } from './rooms/page/clear-rooms.component';
+import { ApiClearRoomsComponent } from './rooms/page/api-clear-rooms.component';
 
 import { AccessGuard } from './shared/services/access.guard';
 import { UsersIndexComponent } from './users/page/users-index.component';
@@ -22,7 +22,7 @@ const routes: Routes = [
     { path: 'users', component: UsersIndexComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
     { path: 'rooms', component: RoomsIndexComponent, pathMatch: 'full', data:{"requiresLogin": true}, canActivate: [AccessGuard]},
     { path: 'rooms/:roomId', component: RoomsIdComponent, pathMatch: 'full', data:{"requiresLogin": true, "serverConfirmRoom": true}, canActivate: [AccessGuard]},
-    { path: 'clear-rooms', component: ClearRoomsComponent, pathMatch: 'full'},
+    { path: 'api/clear-rooms', component: ApiClearRoomsComponent, pathMatch: 'full'},
     // { path: 'login', component: LoginIndexComponent},
     // { path: 'login', redirectTo: ''},
     // { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
