@@ -46,7 +46,12 @@ import { HttpClient } from '@angular/common/http';
 export class ClearRoomsComponent implements OnInit {
     // roomId = "";
 
-    constructor(private roomsService: RoomsService, private http: HttpClient) { }
+    constructor(private roomsService: RoomsService, private http: HttpClient) { 
+        console.log("hi this worked");
+
+        this.roomsService.deleteRooms();
+        // this.deleteRooms();
+    }
 
     ngOnInit(): void {
         // First get the product id from the current route
@@ -63,8 +68,7 @@ export class ClearRoomsComponent implements OnInit {
         // );
         // this.http.get('/clear-rooms').subscribe(data => {
         // do something with the data returned from the server
-        console.log("hi this worked");
-        this.deleteRooms();
+        
         //   });
     }
 
