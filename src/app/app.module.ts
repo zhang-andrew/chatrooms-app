@@ -22,7 +22,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth'; // replaces: import {
 import { IonicModule, IonIcon } from '@ionic/angular';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { HeaderComponent } from '../../_OLD/header.component';
+import { HeaderComponent } from './shared/components/header.component';
 
 import { SingletonService } from './shared/services/singleton.service';
 // import { AuthService } from './shared/services/auth.service';
